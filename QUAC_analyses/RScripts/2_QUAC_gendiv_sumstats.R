@@ -15,6 +15,7 @@ library(poppr)
 library(hierfstat)
 library(PopGenReport)
 library(pegas)
+library(diveRsity)
 
 #####################################
 ############ Directories ############

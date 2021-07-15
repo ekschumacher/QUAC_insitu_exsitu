@@ -12,8 +12,6 @@ library(diveRsity)
 library(adegenet)
 library(poppr)
 library(Demerelate)
-#library(tidyr)
-#library(hierfstat)
 
 #####################################
 ############ Directories ############

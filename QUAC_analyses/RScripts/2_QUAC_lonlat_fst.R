@@ -1,0 +1,74 @@
+##########################
+######## Libraries #######
+##########################
+
+library(adegenet)
+library(poppr)
+library(hierfstat)
+
+#####################################
+############ Directories ############
+#####################################
+##set directory to all butternut files 
+QUAC_data_files <- "C:\\Users\\eschumacher\\Documents\\GitHub\\QUAC_diversity\\QUAC_data_files"
+
+QUAC_analysis_results <- "C:\\Users\\eschumacher\\Documents\\GitHub\\QUAC_diversity\\QUAC_analyses\\Results"
+
+################################
+########## Load files ##########
+################################
+setwd(QUAC_data_files)
+
+QUAC_wild_gen <- read.genepop(paste0(QUAC_data_files, "\\QUAC_genind\\QUAC_wild.gen"), ncode = 3)
+QUAC_wild_df <- read.csv(paste0(QUAC_data_files, "\\QUAC_data_frames\\QUAC_wild_df.csv"))
+
+###create population name list
+QUAC_pop_list <- unique(QUAC_wild_df$Pop)
+
+###rename individuals 
+rownames(QUAC_wild_gen@tab) <- QUAC_wild_df$Ind
+##name populations
+levels(QUAC_wild_gen@pop) <- c("Porter", "Magazine", "Pryor", "Sugar Loaf", "Kessler")
+
+##################################
+####### Geographic Analyses ######
+##################################
+##Calculate mean longitude and latitude for each population
+#first create matrices
+QUAC_mean_lon <- matrix()
+QUAC_mean_lat <- matrix()
+
+##identifying mean latitudes for each population
+
+for(pop in QUAC_pop_list){
+  
+  QUAC_mean_lon[pop] <- mean(QUAC_wild_df[QUAC_wild_df$Pop == pop,][,3])
+  
+  
+}
+
+for(pop in QUAC_pop_list){
+  
+  QUAC_mean_lat[pop] <- mean(QUAC_wild_df[QUAC_wild_df$Pop == pop,][,4])
+  
+  
+}
+
+##convert to matrix
+QUAC_mean_lon <- matrix(QUAC_mean_lon)
+QUAC_mean_lat <- matrix(QUAC_mean_lat)
+
+##document cleanup
+QUAC_mean_lon <- QUAC_mean_lon[-1]
+QUAC_mean_lat <- QUAC_mean_lat[-1]
+
+#combine into one document for mean long and lat for each pop
+QUAC_coords <- matrix(ncol = 2, nrow = length(QUAC_pop_list))
+QUAC_coords[,1] <- QUAC_mean_lon
+QUAC_coords[,2] <- QUAC_mean_lat
+rownames(QUAC_coords) <- c("Porter", "Magazine", "Pryor", "Sugar Loaf", "Kessler")
+colnames(QUAC_coords) <- c("Mean Lon", "Mean Lat")
+
+
+
+

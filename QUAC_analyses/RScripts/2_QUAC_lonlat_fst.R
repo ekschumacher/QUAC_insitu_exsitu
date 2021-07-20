@@ -3,8 +3,8 @@
 ##########################
 
 library(adegenet)
-library(poppr)
 library(hierfstat)
+library(geosphere)
 
 #####################################
 ############ Directories ############
@@ -69,6 +69,37 @@ QUAC_coords[,2] <- QUAC_mean_lat
 rownames(QUAC_coords) <- c("Porter", "Magazine", "Pryor", "Sugar Loaf", "Kessler")
 colnames(QUAC_coords) <- c("Mean Lon", "Mean Lat")
 
+#################################
+###### Fst Calculations #########
+#################################
+
+##convert to hierfstat 
+QUAC_hierfstat <- genind2hierfstat(QUAC_wild_gen)
+
+##run pairwise fst code 
+QUAC_fst_df <- pairwise.neifst(QUAC_hierfstat)
+
+##calculate geographic distances between mean locations
+QUAC_dist <- matrix(nrow = length(QUAC_pop_list), ncol = length(QUAC_pop_list))
+
+for(first in 1:length(QUAC_pop_list)){
+  for(second in 1:length(QUAC_pop_list)){
+    QUAC_dist[first,second] <-  distm(QUAC_coords[first,], QUAC_coords[second,], fun = distGeo)/1000
+  }
+}
+
+##replacce NAs with zeroes 
+QUAC_dist[is.na(QUAC_dist)] <- 0
+
+QUAC_fst_df[is.na(QUAC_fst_df)] <- 0
+
+##run relationship
+QUAC_fst_dist <- lm(QUAC_fst_df[lower.tri(QUAC_fst_df)]~QUAC_dist[lower.tri(QUAC_dist)])
+
+##plot distance and fst 
+plot(QUAC_fst_df[lower.tri(QUAC_fst_df)]~QUAC_dist[lower.tri(QUAC_dist)], pch = 17, ylim = c(0,0.13), 
+     xlab = c("Distance (km)"), ylab = c("Fst"))
+abline(QUAC_fst_dist)
 
 
 

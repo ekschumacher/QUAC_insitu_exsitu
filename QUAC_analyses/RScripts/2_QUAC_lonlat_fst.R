@@ -97,9 +97,11 @@ QUAC_fst_df[is.na(QUAC_fst_df)] <- 0
 QUAC_fst_dist <- lm(QUAC_fst_df[lower.tri(QUAC_fst_df)]~QUAC_dist[lower.tri(QUAC_dist)])
 
 ##plot distance and fst 
+pdf(paste0(QUAC_analysis_results, "\\Structure\\QUAC_Dist_Fst.pdf"))
 plot(QUAC_fst_df[lower.tri(QUAC_fst_df)]~QUAC_dist[lower.tri(QUAC_dist)], pch = 17, ylim = c(0,0.13), 
+     xlim = c(0,200),
      xlab = c("Distance (km)"), ylab = c("Fst"))
 abline(QUAC_fst_dist)
-
-
+legend('bottomleft', legend = c("R2 = -0.12","p-value = 0.865"), bty = 'n')
+dev.off()
 

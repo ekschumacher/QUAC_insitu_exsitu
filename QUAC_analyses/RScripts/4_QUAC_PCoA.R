@@ -7,7 +7,6 @@
 ##########################
 
 library(adegenet)
-library(diveRsity)
 
 #####################################
 ############ Directories ############
@@ -17,6 +16,9 @@ QUAC_data_files <- "C:\\Users\\eschumacher\\Documents\\GitHub\\QUAC_diversity\\Q
 
 QUAC_analysis_results <- "C:\\Users\\eschumacher\\Documents\\GitHub\\QUAC_diversity\\QUAC_analyses\\Results"
 
+########################################
+########### Load in Files ##############
+########################################
 ##load in garden vs. all wild pops
 QUAC_garden_allpop_gen <- read.genepop(paste0(QUAC_data_files, "\\QUAC_genind\\QUAC_garden_allwildpop_clean.gen"), ncode = 3)
 

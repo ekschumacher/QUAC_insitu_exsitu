@@ -140,20 +140,21 @@ for(pop in 1:length(QUAC_pop_type_gen)){
     for(pop2 in QUAC_pop_names){
       
       QUAC_mean_lon[pop2] <- mean(QUAC_pop_df_list[[2]][QUAC_pop_df_list[[2]]$Pop == pop2,][,3])
-      QUAC_mean_lon <- matrix(QUAC_mean_lon)[-1,]  ; 
-    #  QUAC_mean_lon <- QUAC_mean_lon[2:6,]
-     # rownames(QUAC_mean_lon) <- QUAC_pop_names ; colnames(QUAC_mean_lon) <- c("Mean_Lon")
+      QUAC_mean_lon <- matrix(QUAC_mean_lon)
       
     }
     
     for(pop2 in QUAC_pop_names){
       
       QUAC_mean_lat[pop2] <- mean(QUAC_pop_df_list[[2]][QUAC_pop_df_list[[2]]$Pop == pop2,][,4])
-    #  QUAC_mean_lat <- matrix(QUAC_mean_lat) 
-      #; rownames(QUAC_mean_lat) <- QUAC_pop_names ; colnames(QUAC_mean_lat) <- c("Mean_Lat")
       
       
     }
+    
+    QUAC_lonlat_df <- cbind(QUAC_mean_lon, QUAC_mean_lat)
+    QUAC_lonlat_df <- QUAC_lonlat_df[c(2:6),]
+    
+    QUAC_gendiv_sumstat_df <- cbind(QUAC_lonlat_df, QUAC_gendiv_sumstat_df)
     
   }
   

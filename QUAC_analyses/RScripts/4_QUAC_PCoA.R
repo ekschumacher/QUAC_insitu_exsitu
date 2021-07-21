@@ -17,16 +17,6 @@ QUAC_data_files <- "C:\\Users\\eschumacher\\Documents\\GitHub\\QUAC_diversity\\Q
 
 QUAC_analysis_results <- "C:\\Users\\eschumacher\\Documents\\GitHub\\QUAC_diversity\\QUAC_analyses\\Results"
 
-################################
-########## Load files ##########
-################################
-setwd(QUAC_data_files)
- 
-QUAC_wild_gen <- read.genepop(paste0(QUAC_data_files, "\\QUAC_genind\\QUAC_wild.gen"), ncode = 3)
-QUAC_garden_gen <- read.genepop(paste0(QUAC_data_files, "\\QUAC_genind\\QUAC_garden.gen"), ncode = 3)
-QUAC_wild_df <- read.csv(paste0(QUAC_data_files, "\\QUAC_data_frames\\QUAC_wild_df.csv"))
-QUAC_garden_df <- read.csv(paste0(QUAC_data_files, "\\QUAC_data_frames\\QUAC_garden_df.csv"))
-
 ##load in garden vs. all wild pops
 QUAC_garden_allpop_gen <- read.genepop(paste0(QUAC_data_files, "\\QUAC_genind\\QUAC_garden_allwildpop_clean.gen"), ncode = 3)
 

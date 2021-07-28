@@ -20,7 +20,7 @@ QUAC_analysis_results <- "C:\\Users\\eschumacher\\Documents\\GitHub\\QUAC_divers
 setwd(QUAC_data_files)
 
 QUAC_wild_gen <- read.genepop(paste0(QUAC_data_files, "\\QUAC_genind\\QUAC_wild.gen"), ncode = 3)
-QUAC_wild_df <- read.csv(paste0(QUAC_data_files, "\\QUAC_data_frames\\QUAC_wild_df.csv"))
+QUAC_wild_df <- read.csv(paste0(QUAC_data_files, "\\QUAC_data_frames\\garden_wild\\QUAC_wild_df.csv"))
 
 ###create population name list
 QUAC_pop_list <- unique(QUAC_wild_df$Pop)
@@ -104,4 +104,18 @@ plot(QUAC_fst_df[lower.tri(QUAC_fst_df)]~QUAC_dist[lower.tri(QUAC_dist)], pch = 
 abline(QUAC_fst_dist)
 legend('bottomleft', legend = c("R2 = -0.12","p-value = 0.865"), bty = 'n')
 dev.off()
+
+###test IBD 
+#convert to genpop
+QUAC_wild_genpop <- genind2genpop(QUAC_wild_gen)
+QUAC_gen_dist <- dist.genpop(QUAC_wild_genpop)
+QUAC_geo_dist <- dist(QUAC_coords)
+ibd <- mantel.randtest(QUAC_gen_dist, QUAC_geo_dist) ##not significant
+QUAC_gen_dist_lm <- lm(as.numeric(QUAC_gen_dist)~as.numeric(QUAC_geo_dist))
+QUAC_gen_dist_lm_sum <- summary(QUAC_gen_dist_lm)
+                       
+####
+plot(QUAC_gen_dist~QUAC_geo_dist)
+abline(QUAC_gen_dist_lm, col="red",lty=2)
+
 

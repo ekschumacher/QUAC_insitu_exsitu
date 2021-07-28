@@ -34,19 +34,32 @@ for(a in 1:length(QUAC_arp_list)){
 ####
 QUAC_wild_est_gen <- read.genepop("QUAC_genind\\garden_wild\\QUAC_wild_est.gen", ncode = 3)
 QUAC_wild_est_df <- read.csv("QUAC_data_frames\\garden_wild\\QUAC_wild_est_df.csv")
-##
-QUAC_wild_non_est_gen <- read.genepop("QUAC_genind\\garden_wild\\QUAC_wild_cleaned_non_EST.gen", ncode = 3)
 ##load in non-est 
+QUAC_wild_non_est_gen <- read.genepop("QUAC_genind\\garden_wild\\QUAC_wild_cleaned_non_EST.gen", ncode = 3)
+## load in garden / est info 
+QUAC_garden_est_gen <- read.genepop("QUAC_genind\\garden_wild\\QUAC_garden_cleaned_EST.gen", ncode = 3)
+##load in garden non-est file 
+QUAC_garden_non_est_gen <- read.genepop("QUAC_genind\\garden_wild\\QUAC_garden_cleaned_non_EST.gen", ncode = 3)
+
+##load in garden data frame 
+QUAC_garden_df <- read.csv("QUAC_data_frames\\garden_wild\\QUAC_garden_cleaned_EST_df.csv")
 
 ##rownames 
 rownames(QUAC_wild_est_gen@tab) <- QUAC_wild_est_df$Ind
 rownames(QUAC_wild_non_est_gen@tab) <- QUAC_wild_est_df$Ind
+rownames(QUAC_garden_est_gen@tab) <- QUAC_garden_df$Ind
+rownames(QUAC_garden_non_est_gen@tab) <- QUAC_garden_df$Ind
 
 ##name populations 
 levels(QUAC_wild_est_gen@pop) <- unique(QUAC_wild_est_df$Pop)
 levels(QUAC_wild_non_est_gen@pop) <- unique(QUAC_wild_est_df$Pop)
+levels(QUAC_garden_est_gen@pop) <- unique(QUAC_garden_df$POP)
+levels(QUAC_garden_non_est_gen@pop) <- unique(QUAC_garden_df$POP)
 
-########Wild analyses
+##create garden names list 
+garden_names <- unique(QUAC_garden_df$POP)
+
+####################################################Wild analyses
 #########################################
 ############ Run Analyses ###############
 #########################################
@@ -113,3 +126,33 @@ pdf("G:\\Shared drives\\Emily_Schumacher\\QUAC_analyses\\QUAC_est_nonest.pdf")
 boxplot(QUAC_est_org$All_Rich, QUAC_wild_nonest_allrich$All_Rich, names = c("ESTs", "Non-ESTs"), 
         ylim = c(0,15), col = c("darkseagreen1","darkseagreen4"))
 dev.off()
+
+############################Garden Analyses 
+#################################################
+###### Within Garden hexp and allrich ###########
+#################################################
+##
+QUAC_garden_est_allrich_table <- allelic.richness(QUAC_garden_est_gen)$Ar
+QUAC_garden_non_est_allrich_table <- allelic.richness(QUAC_garden_non_est_gen)$Ar
+
+##write out tables 
+write.csv(QUAC_garden_est_allrich_table, "G:\\Shared drives\\Emily_Schumacher\\QUAC_analyses\\QUAC_garden_est_allrich_table.csv")
+write.csv(QUAC_garden_non_est_allrich_table, "G:\\Shared drives\\Emily_Schumacher\\QUAC_analyses\\QUAC_garden_non_est_allrich_table.csv")
+
+##read files in 
+QUAC_garden_est_allrich_org <- read.csv("G:\\Shared drives\\Emily_Schumacher\\QUAC_analyses\\QUAC_garden_est_allrich_table_org.csv")
+QUAC_garden_non_est_allrich_org <- read.csv("G:\\Shared drives\\Emily_Schumacher\\QUAC_analyses\\QUAC_garden_non_est_allrich_table_org.csv")
+
+##t-test to check if gardens differ with ESTs
+kruskal.test(QUAC_garden_est_allrich_org$All_Rich~as.factor(QUAC_garden_est_allrich_org$Pop))
+kruskal.test(QUAC_garden_non_est_allrich_org$All_Rich~as.factor(QUAC_garden_non_est_allrich_org$Pop))
+
+##new list 
+QUAC_garden_est_df_hexp <- matrix(nrow = 10, ncol = length(garden_names))
+for(a in 1:length(garden_names)){
+  
+  QUAC_garden_est_df_hexp[,a] <- summary(seppop(QUAC_garden_est_gen)[[a]])$Hexp
+  
+}
+
+

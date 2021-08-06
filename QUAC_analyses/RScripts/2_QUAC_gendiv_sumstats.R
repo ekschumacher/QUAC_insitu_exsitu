@@ -2,7 +2,7 @@
 #First, we tested linkage disequilibrium, null alleles, 
 #and Hardy Weinberg equilibrium.
 #Next, a data frame including expected heterozygosity, allelic richness,
-#number of alleles, mean longtiude and latitude by population, and 
+#number of alleles, mean longtitude and latitude by population, and 
 #individual numbers. This table is included in full in the supplemental text 
 #of this manuscript.
 
@@ -37,8 +37,8 @@ setwd(QUAC_data_files)
 QUAC_gen <- read.genepop(paste0(QUAC_data_files, "\\QUAC_genind\\QUAC_allpop_clean.gen"), ncode = 3)
 
 ##load in just garden, just wild
-QUAC_garden_gen <- read.genepop(paste0(QUAC_data_files, "\\QUAC_genind\\QUAC_garden_clean.gen"), ncode = 3)
-QUAC_wild_gen <- read.genepop(paste0(QUAC_data_files, "\\QUAC_genind\\QUAC_wild_clean.gen"), ncode = 3)
+QUAC_garden_gen <- read.genepop(paste0(QUAC_data_files, "\\QUAC_genind\\garden_wild\\QUAC_garden_clean.gen"), ncode = 3)
+QUAC_wild_gen <- read.genepop(paste0(QUAC_data_files, "\\QUAC_genind\\garden_wild\\QUAC_wild_clean.gen"), ncode = 3)
 
 ##load in data frame 
 QUAC_allpop_df <- read.csv(paste0(QUAC_data_files, "\\QUAC_data_frames\\QUAC_allpop_clean.csv"))
@@ -51,8 +51,8 @@ QUAC_popnames <- unique(QUAC_allpop_df$Pop)
 
 ##rename pops in genind
 levels(QUAC_gen@pop) <- QUAC_popnames
-levels(QUAC_garden_gen@pop) <- QUAC_garden_names
-levels(QUAC_wild_gen@pop) <- QUAC_wild_names
+#levels(QUAC_garden_gen@pop) <- QUAC_garden_names
+#levels(QUAC_wild_gen@pop) <- QUAC_wild_names
 
 ############################################################################
 ####### Run Genetic Diversity Checks like LD, HWE, Null Alleles  ###########
@@ -89,77 +89,107 @@ write.csv(QUAC_ld_df, paste0(QUAC_analysis_results, "\\Sum_Stats\\QUAC_ld_df.csv
 ######################################
 
 QUAC_pop_type_gen <- list.files(path = "QUAC_genind\\garden_wild", pattern = ".gen$")
-QUAC_pop_type_df <- list.files(path = "QUAC_data_frames\\garden_wild", pattern = ".csv$")
+QUAC_pop_type_df <- list.files(path = "QUAC_data_frames", pattern = "_df.csv$")
 QUAC_pop_df_list <- list()
-for(a in 1:2) {
-  QUAC_pop_df_list[[a]] <- read.csv(paste0("QUAC_data_frames\\garden_wild\\", QUAC_pop_type_df[[a]]))
-}
-QUAC_garden_wild <- c("garden","wild")
 
+##first read in data frames in
+for(a in 1:length(QUAC_pop_type_df)) {
+  
+  QUAC_pop_df_list[[a]] <- read.csv(paste0("QUAC_data_frames\\", QUAC_pop_type_df[[a]]))
+
+}
+
+#QUAC_garden_wild <- c("garden","wild")
+QUAC_type_list <- c("QUAC_garden_allwildpop_clean", "QUAC_garden_clean",
+                    "QUAC_garden_cleaned_EST", "QUAC_garden_cleaned_non_EST",
+                    "QUAC_garden_wild_clean", "QUAC_wild_clean", "QUAC_wild_cleaned_EST",
+                    "QUAC_wild_cleaned_non_EST")
+
+##create a list to save all the data frames 
+QUAC_gendiv_sumstat_list <- list()
+
+##write loop to calculate all summary stats 
 for(pop in 1:length(QUAC_pop_type_gen)){
   
-  QUAC_temp_gen <- read.genepop(paste0("QUAC_genind\\garden_wild\\",QUAC_pop_type_gen[[pop]]), ncode = 3)
+  QUAC_temp_gen <- read.genepop(paste0("QUAC_genind\\garden_wild\\", QUAC_pop_type_gen[[pop]]), ncode = 3)
   
   ##rename rownames
   rownames(QUAC_temp_gen@tab) <- QUAC_pop_df_list[[pop]][,1]
   ##get pop names
   QUAC_pop_names <- unique(QUAC_pop_df_list[[pop]][,2])
   ##rename pops
-  levels(QUAC_temp_gen) <- QUAC_pop_names
+  levels(QUAC_temp_gen@pop) <- QUAC_pop_names
   
   ###start genetic analyses
   QUAC_temp_sum <- summary(QUAC_temp_gen)
   ##create poppr file 
   QUAC_poppr <- poppr(QUAC_temp_gen)
   #expected heterozygosity 
-  QUAC_hexp <- QUAC_poppr[1:length(QUAC_pop_names), 10]
+  QUAC_hexp <- QUAC_poppr[1:length(table(QUAC_temp_gen@pop)),10]
   ##allele numbers by pop 
   QUAC_nall <- QUAC_temp_sum$pop.n.all
   ##individual numbers
-  QUAC_ind <- QUAC_poppr[1:length(QUAC_pop_names), 2:3]
+  #QUAC_ind <- QUAC_poppr[1:length(QUAC_pop_names), 2:3]
   ##allelic richness code 
   QUAC_alleles <- QUAC_temp_sum$pop.n.all/length(QUAC_temp_gen@loc.n.all)
   QUAC_allrich <- colMeans(allelic.richness(QUAC_temp_gen)$Ar)	
   
   ##create data frame 
-  QUAC_gendiv_sumstat_df <- signif(cbind(QUAC_ind, QUAC_nall, QUAC_allrich, QUAC_hexp),3)
+  #QUAC_gendiv_sumstat_df <- signif(cbind(QUAC_ind, QUAC_nall, QUAC_allrich, QUAC_hexp),3)
+  
+  QUAC_gendiv_sumstat_df <- signif(cbind(QUAC_nall, QUAC_allrich, QUAC_hexp),3)
   
   ##name columns and rows 
   rownames(QUAC_gendiv_sumstat_df) <- QUAC_pop_names
-  colnames(QUAC_gendiv_sumstat_df) <- c("Number of Individuals", "MLG","Number of Alleles", "Allelic Richness", "Expected Heterozygosity")
+  colnames(QUAC_gendiv_sumstat_df) <- c("Number of Alleles", "Allelic Richness", "Expected Heterozygosity")
   
-  if(pop == 2){
+  if(pop == 6){
     
     ##Calculate mean longitude and latitude for each wild population
     #first create matrices
-    QUAC_mean_lon <- matrix()
-    QUAC_mean_lat <- matrix()
+      QUAC_mean_lon <- matrix()
+      QUAC_mean_lat <- matrix()
     
     ##identifying mean latitudes for each population
     
     for(pop2 in QUAC_pop_names){
       
-      QUAC_mean_lon[pop2] <- mean(QUAC_pop_df_list[[2]][QUAC_pop_df_list[[2]]$Pop == pop2,][,3])
-      QUAC_mean_lon <- matrix(QUAC_mean_lon)
+        QUAC_mean_lon[pop2] <- mean(QUAC_pop_df_list[[6]][QUAC_pop_df_list[[6]]$Pop == pop2,][,3])
+        QUAC_mean_lon <- matrix(QUAC_mean_lon)
       
     }
     
     for(pop2 in QUAC_pop_names){
       
-      QUAC_mean_lat[pop2] <- mean(QUAC_pop_df_list[[2]][QUAC_pop_df_list[[2]]$Pop == pop2,][,4])
+      QUAC_mean_lat[pop2] <- mean(QUAC_pop_df_list[[6]][QUAC_pop_df_list[[6]]$Pop == pop2,][,4])
+      QUAC_mean_lat <- matrix(QUAC_mean_lat)
       
-      
-    }
+      }
     
     QUAC_lonlat_df <- cbind(QUAC_mean_lon, QUAC_mean_lat)
     QUAC_lonlat_df <- QUAC_lonlat_df[c(2:6),]
     
-    QUAC_gendiv_sumstat_df <- cbind(QUAC_lonlat_df, QUAC_gendiv_sumstat_df)
+   QUAC_gendiv_sumstat_df <- cbind(QUAC_lonlat_df, QUAC_gendiv_sumstat_df)
     
   }
   
+  ##save as a list 
+ # QUAC_gendiv_sumstat_list[[pop]] <- QUAC_gendiv_sumstat_df
+  
+  ##create a p-value data frame 
+  #QUAC_pvalue <- matrix(nrow = 1, ncol = length(colnames(QUAC_gendiv_sumstat_list[[1]])))
+  
+  ##write loop to calculate p-values 
+ # for(p in 1:length(colnames(QUAC_gendiv_sumstat_list[[1]]))){
+    
+   # QUAC_pvalue[,p] <- wilcox.test(QUAC_gendiv_sumstat_list[[1]][c(2:6),p], QUAC_gendiv_sumstat_list[[1]][1,p])[3]$p.value
+    
+    
+  #  
+  #}
+  
   ##write out csv 
-  write.csv(QUAC_gendiv_sumstat_df, paste0(QUAC_analysis_results, "\\Sum_Stats\\QUAC_", QUAC_garden_wild[[pop]],"_gendiv_sumstat_df.csv"))
+  #write.csv(QUAC_gendiv_sumstat_df, paste0(QUAC_analysis_results, "\\Sum_Stats\\", QUAC_type_list[[pop]],"_gendiv_sumstat_df.csv"))
   
 }
 

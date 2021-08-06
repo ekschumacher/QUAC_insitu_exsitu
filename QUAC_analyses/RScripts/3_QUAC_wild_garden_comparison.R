@@ -150,6 +150,7 @@ colnames(QUAC_allele_cap_table) <- list_allele_cat
 for(m in 1:length(QUAC_all_exist[1,])){
     
   QUAC_allele_cap_table[,m] <- paste0(signif((QUAC_wild_capt[,m]*100),3), "%", "(", signif(QUAC_all_exist[,m],3), ")")
+
 }
 
 write.csv(QUAC_allele_cap_table, paste0(QUAC_analysis_results, "\\Wild_Garden_Comparison\\QUAC_allele_cap_table.csv"))

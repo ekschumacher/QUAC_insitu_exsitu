@@ -56,8 +56,14 @@ levels(QUAC_gen@pop) <- QUAC_popnames
 ############################################################################
 ####### Run Genetic Diversity Checks like LD, HWE, Null Alleles  ###########
 ############################################################################
+##create list 
+QUAC_nullall_pop <- list()
 ##calculate null alleles 
-QUAC_null_all <- null.all(QUAC_gen)
+for(i in 1:length(QUAC_popnames)){
+  
+  QUAC_nullall_pop[[i]] <- null.all(seppop(QUAC_gen)[[i]])$null.allele.freq$summary1
+  
+}
 
 ##create null allele table
 QUAC_null_all_df <- matrix(nrow = length(rownames(QUAC_null_all$null.allele.freq$summary1)),
@@ -126,27 +132,22 @@ for(pop in 1:length(QUAC_pop_type_gen)){
   QUAC_temp_sum <- summary(QUAC_temp_gen)
   ##create poppr file 
   QUAC_poppr <- poppr(QUAC_temp_gen)
-  #expected heterozygosity 
-  ##save in a list for statistical test 
-  #QUAC_hexp_list[[pop]] <- seppop(summary(QUAC_temp_gen)$Hexp)
   ##save mean for final output table 
   QUAC_hexp_mean <- QUAC_poppr[1:length(table(QUAC_temp_gen@pop)),10]
   ##allele numbers by pop 
   QUAC_nall <- QUAC_temp_sum$pop.n.all
   ##individual numbers
-  #QUAC_ind <- QUAC_poppr[1:length(QUAC_pop_names), 2:3]
-  ##allelic richness code 
-  QUAC_alleles <- QUAC_temp_sum$pop.n.all/length(QUAC_temp_gen@loc.n.all)
+  QUAC_ind <- QUAC_poppr[1:length(QUAC_pop_names), 2:3]
   ##save allelic richness for comparison
   QUAC_allrich_list[[pop]] <- allelic.richness(QUAC_temp_gen)$Ar
   QUAC_allrich_mean <- colMeans(allelic.richness(QUAC_temp_gen)$Ar)	
   
   ##create data frame 
-  QUAC_gendiv_sumstat_df <- signif(cbind(QUAC_nall, QUAC_allrich_mean, QUAC_hexp_mean),3)
+  QUAC_gendiv_sumstat_df <- signif(cbind(QUAC_ind, QUAC_nall, QUAC_allrich_mean, QUAC_hexp_mean),3)
   
   ##name columns and rows 
   rownames(QUAC_gendiv_sumstat_df) <- QUAC_pop_names
-  colnames(QUAC_gendiv_sumstat_df) <- c("Number of Alleles", "Allelic Richness", "Expected Heterozygosity")
+  colnames(QUAC_gendiv_sumstat_df) <- c("Ind", "MLG", "Number of Alleles", "Allelic Richness", "Expected Heterozygosity")
   
      if(pop == 2){
     
@@ -182,6 +183,3 @@ for(pop in 1:length(QUAC_pop_type_gen)){
   write.csv(QUAC_gendiv_sumstat_df, paste0(QUAC_analysis_results, "\\Sum_Stats\\", QUAC_pop_type[[pop]],"_gendiv_sumstat_df.csv"))
   
 }
-
-
-

@@ -1,4 +1,5 @@
-#This script will compare the statistics of geneclass assignment 
+#This script will create statistics of geneclass assignment 
+#to determine how well this analysis performed
 
 ##########################
 ######## Libraries #######
@@ -16,10 +17,9 @@ QUAC_analysis_results <- "C:\\Users\\eschumacher\\Documents\\GitHub\\QUAC_divers
 ###############################################
 ####### Read in classification data frame #####
 ###############################################
-
-
-QUAC_assignment_output <- list.files(path = "G:\\Shared drives\\Emily_Schumacher\\QUAC_analyses\\GeneClass", 
-                                     pattern = "output.csv$")
+setwd(QUAC_data_files)
+##load in output data frames from Geneclass
+QUAC_assignment_output <- list.files(path = "QUAC_geneclass", pattern = "output.csv$")
 ##list of data frames 
 QUAC_assignment_output_df <- list()
 
@@ -27,7 +27,7 @@ QUAC_assignment_output_df <- list()
 QUAC_classification_percent <- matrix(nrow = 3, ncol = 4)
 
 ##list of data frames 
-QUAC_classification_samp_pop <- matrix(nrow = length(rownames(QUAC_assignment_output_df[[1]])), ncol = 3)
+QUAC_classification_samp_pop <- matrix(nrow = 146, ncol = 3)
 
 ##data frame to store % correct assignment for structured assignment 
 QUAC_classification_str_samp_pop <- matrix(nrow = 3, ncol = 1)
@@ -52,6 +52,17 @@ for(i in 1:length(QUAC_assignment_output)){
   for(j in 1:146) QUAC_classification_samp_pop[j,i] <- grepl(QUAC_assignment_output_df[[i]][j,3], QUAC_assignment_output_df[[i]][j,4], fixed = TRUE)
   
   ##calculate the % correct assignment rate in the first column 
-  QUAC_classification_str_samp_pop[i,] <- length(QUAC_assignment_df[(QUAC_classification_samp_pop[,i] == "TRUE"),][,1])/length(QUAC_classification_samp_pop[,1])*100
+  QUAC_classification_str_samp_pop[i,] <- length(QUAC_classification_samp_pop[(QUAC_classification_samp_pop[,i] == "TRUE"),][,i])/length(QUAC_classification_samp_pop[,i])*100
+
 }
+
+#name rows and columns 
+rownames(QUAC_classification_percent) <- c("WildPops","SixPops","ThreePops")
+colnames(QUAC_classification_percent) <- c("Assign_25%","Assign_50%","Assign_75%","Assign_95%")
+rownames(QUAC_classification_str_samp_pop) <- c("WildPops","SixPops","ThreePops")
+colnames(QUAC_classification_str_samp_pop) <- "Percent_Classified_Correctly"
+
+##write out data frames
+write.csv(QUAC_classification_percent, paste0(QUAC_analysis_results, "\\Clustering\\Assignment_percentage.csv"))
+write.csv(QUAC_classification_str_samp_pop, paste0(QUAC_analysis_results, "\\Clustering\\pop_correct_assign.csv"))
 

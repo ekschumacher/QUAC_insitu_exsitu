@@ -4,7 +4,7 @@
 ######## Libraries #######
 ##########################
 
-
+library(adegenet)
 
 #####################################
 ############ Directories ############
@@ -17,37 +17,41 @@ QUAC_analysis_results <- "C:\\Users\\eschumacher\\Documents\\GitHub\\QUAC_divers
 ####### Read in classification data frame #####
 ###############################################
 
-QUAC_assignment_output <- read.csv(paste0(QUAC_data_files, "\\QUAC_data_frames\\QUAC_assignment_output.csv"))
 
-##calculate the percent of the individuals assignment 25% of the time 
-length(rownames(QUAC_assignment_output[QUAC_assignment_output$Percent_1 >= 25,]))/(length(rownames(QUAC_assignment_output)))*100
+QUAC_assignment_output <- list.files(path = "G:\\Shared drives\\Emily_Schumacher\\QUAC_analyses\\GeneClass", 
+                                     pattern = "output.csv$")
+##list of data frames 
+QUAC_assignment_output_df <- list()
 
-##50% of the time 
-length(rownames(QUAC_assignment_output[QUAC_assignment_output$Percent_1 >= 50,]))/(length(rownames(QUAC_assignment_output)))*100
+##data frame to store all of the results 
+QUAC_classification_percent <- matrix(nrow = 3, ncol = 4)
 
-##75% of the time 
-length(rownames(QUAC_assignment_output[QUAC_assignment_output$Percent_1 >= 75,]))/(length(rownames(QUAC_assignment_output)))*100
+##list of data frames 
+QUAC_classification_samp_pop <- matrix(nrow = length(rownames(QUAC_assignment_output_df[[1]])), ncol = 3)
 
-##95% of the time 
-length(rownames(QUAC_assignment_output[QUAC_assignment_output$Percent_1 >= 95,]))/(length(rownames(QUAC_assignment_output)))*100
+##data frame to store % correct assignment for structured assignment 
+QUAC_classification_str_samp_pop <- matrix(nrow = 3, ncol = 1)
 
-###
-QUAC_assignment_df <- matrix(nrow = length(QUAC_assignment_output$Ind), ncol = 2)
-
-##
-for(i in 1:length(QUAC_assignment_output$Ind)){
+##loops to calculate % classification
+for(i in 1:length(QUAC_assignment_output)){
+  ##data frame loading 
+  QUAC_assignment_output_df[[i]] <- read.csv(paste0("G:\\Shared drives\\Emily_Schumacher\\QUAC_analyses\\GeneClass\\", QUAC_assignment_output[[i]]))
   
-  QUAC_assignment_df[i,1] <- identical(QUAC_assignment_output[i,3],QUAC_assignment_output[i,4])
+  ##fill in data frame for percent classification 
+  QUAC_classification_percent[i,1] <- length(rownames(QUAC_assignment_output_df[[i]][QUAC_assignment_output_df[[i]][,5] >= 25,]))/(length(rownames(QUAC_assignment_output_df[[i]])))*100
   
-  QUAC_assignment_df[i,2] <- identical(QUAC_assignment_output[i,3],QUAC_assignment_output[i,6])
+  QUAC_classification_percent[i,2] <- length(rownames(QUAC_assignment_output_df[[i]][QUAC_assignment_output_df[[i]][,5] >= 50,]))/(length(rownames(QUAC_assignment_output_df[[i]])))*100
+  
+  ##75% of the time 
+  QUAC_classification_percent[i,3] <- length(rownames(QUAC_assignment_output_df[[i]][QUAC_assignment_output_df[[i]][,5] >= 75,]))/(length(rownames(QUAC_assignment_output_df[[i]])))*100
+  
+  ##95% of the time 
+  QUAC_classification_percent[i,4] <- length(rownames(QUAC_assignment_output_df[[i]][QUAC_assignment_output_df[[i]][,5] >= 95,]))/(length(rownames(QUAC_assignment_output_df[[i]])))*100
+  
+  ##now create a data frame to compare if part of a word is contained in the data frame 
+  for(j in 1:146) QUAC_classification_samp_pop[j,i] <- grepl(QUAC_assignment_output_df[[i]][j,3], QUAC_assignment_output_df[[i]][j,4], fixed = TRUE)
+  
+  ##calculate the % correct assignment rate in the first column 
+  QUAC_classification_str_samp_pop[i,] <- length(QUAC_assignment_df[(QUAC_classification_samp_pop[,i] == "TRUE"),][,1])/length(QUAC_classification_samp_pop[,1])*100
 }
 
-length(QUAC_assignment_df[(QUAC_assignment_df[,1] == "TRUE"),][,1])/length(QUAC_assignment_df[,1])*100
-
-length(QUAC_assignment_df[(QUAC_assignment_df[,1] == "TRUE")|(QUAC_assignment_df[,2] == "TRUE"),][,1])/length(QUAC_assignment_df[,1])*100
-
-QUAC_S1_df <- QUAC_assignment_output[QUAC_assignment_output$Sampled.From == c("Kessler","Magazine","SL","Porter"),]
-QUAC_S1_df$Assign <- "S1"
-
-QUAC_S2_df <- QUAC_assignment_output[QUAC_assignment_output$Sampled.From == "Pryor",]
-QUAC_S2_df$Assign <- "S2"

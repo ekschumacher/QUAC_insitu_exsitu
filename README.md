@@ -1,4 +1,4 @@
-# QUAC_diversity
+# QUAC_insitu_exsitu
 
 Code determining genetic diversity capture of the rare oak species <i>Quercus acerifolia </i> <i>ex situ</i>. (<i>Quercus acerifolia</i> is abbreviated to QUAC in this project). 
 

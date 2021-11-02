@@ -65,7 +65,7 @@ QUAC_wild_hexp <- summary(seppop(QUAC_garden_wild_gen)$Wild)[7]
 QUAC_garden_hexp <- summary(seppop(QUAC_garden_wild_gen)$Garden)[7]
 
 ##calculate allelic richness
-QUAC_wild_allrich <- allelic.richness(seppop(QUAC_garden_wild_gen)$Wild)$Ar
+QUAC_garden_allrich <- allelic.richness(seppop(QUAC_garden_wild_gen)$Wild)$Ar
 QUAC_garden_allrich <- allelic.richness(seppop(QUAC_garden_wild_gen)$Garden)$Ar
 
 ##create gendiv data frame 

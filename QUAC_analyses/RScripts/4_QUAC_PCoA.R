@@ -1,6 +1,6 @@
-#This code is used to generate PCoAs for the analysis
-#This file uses the reduced individual document from the 
-#relatedness removal document 
+###########This code is used to generate PCoAs for the analysis
+##########This file uses the reduced individual document from the 
+#########relatedness removal document 
 
 ##########################
 ######## Libraries #######

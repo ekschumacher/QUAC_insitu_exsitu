@@ -1,3 +1,8 @@
+################This script calculates the Fst between wild Q. acerifolia populations 
+###############and compares it to the distance between populations 
+##############First we calculate the Fst between wild Q. acerifolia populations 
+#############and then run a linear regression between distance between populations and then run a Mantel test
+
 ##########################
 ######## Libraries #######
 ##########################
@@ -10,17 +15,17 @@ library(geosphere)
 ############ Directories ############
 #####################################
 ##set directory to all butternut files 
-QUAC_data_files <- "C:\\Users\\eschumacher\\Documents\\GitHub\\QUAC_diversity\\QUAC_data_files"
+QUAC_data_files <- "C:\\Users\\eschumacher\\Documents\\GitHub\\QUAC_insitu_exsitu\\QUAC_data_files"
 
-QUAC_analysis_results <- "C:\\Users\\eschumacher\\Documents\\GitHub\\QUAC_diversity\\QUAC_analyses\\Results"
+QUAC_analysis_results <- "C:\\Users\\eschumacher\\Documents\\GitHub\\QUAC_insitu_exsitu\\QUAC_analyses\\Results"
 
 ################################
 ########## Load files ##########
 ################################
 setwd(QUAC_data_files)
 
-QUAC_wild_gen <- read.genepop(paste0(QUAC_data_files, "\\QUAC_genind\\QUAC_wild.gen"), ncode = 3)
-QUAC_wild_df <- read.csv(paste0(QUAC_data_files, "\\QUAC_data_frames\\garden_wild\\QUAC_wild_df.csv"))
+QUAC_wild_gen <- read.genepop(paste0(QUAC_data_files, "\\QUAC_genind\\Garden_Wild\\QUAC_wild_clean.gen"), ncode = 3)
+QUAC_wild_df <- read.csv(paste0(QUAC_data_files, "\\QUAC_data_frames\\Garden_Wild\\QUAC_wild_clean_df.csv"))
 
 ###create population name list
 QUAC_pop_list <- unique(QUAC_wild_df$Pop)
@@ -97,7 +102,7 @@ QUAC_fst_df[is.na(QUAC_fst_df)] <- 0
 QUAC_fst_dist <- lm(QUAC_fst_df[lower.tri(QUAC_fst_df)]~QUAC_dist[lower.tri(QUAC_dist)])
 
 ##plot distance and fst 
-pdf(paste0(QUAC_analysis_results, "\\Structure\\QUAC_Dist_Fst.pdf"))
+pdf(paste0(QUAC_analysis_results, "\\Clustering\\QUAC_Dist_Fst.pdf"))
 plot(QUAC_fst_df[lower.tri(QUAC_fst_df)]~QUAC_dist[lower.tri(QUAC_dist)], pch = 17, ylim = c(0,0.13), 
      xlim = c(0,200),
      xlab = c("Distance (km)"), ylab = c("Fst"))
@@ -110,7 +115,7 @@ dev.off()
 QUAC_wild_genpop <- genind2genpop(QUAC_wild_gen)
 QUAC_gen_dist <- dist.genpop(QUAC_wild_genpop)
 QUAC_geo_dist <- dist(QUAC_coords)
-ibd <- mantel.randtest(QUAC_gen_dist, QUAC_geo_dist) ##not significant
+QUAC_IBD <- mantel.randtest(QUAC_gen_dist, QUAC_geo_dist) ##not significant
 QUAC_gen_dist_lm <- lm(as.numeric(QUAC_gen_dist)~as.numeric(QUAC_geo_dist))
 QUAC_gen_dist_lm_sum <- summary(QUAC_gen_dist_lm)
                        

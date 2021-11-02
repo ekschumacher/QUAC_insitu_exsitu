@@ -1,3 +1,8 @@
+##############This script details the analysis of actually comparing genetic diversity levels between garden 
+#############and wild Q. acerifolia populations. We first calculated diversity levels throughout all garden  
+############and wild populations (indicated by allelic richness and expected heterozygosity) and then ran a t-test 
+###########between the values. The resulting figures can be found in the main text 
+
 ##########################
 ######## Libraries #######
 ##########################
@@ -5,38 +10,39 @@
 library(adegenet)
 library(diveRsity)
 library(poppr)
+library(hierfstat)
 
 #####################################
 ############ Directories ############
 #####################################
-QUAC_data_files <- "C:\\Users\\eschumacher\\Documents\\GitHub\\QUAC_diversity\\QUAC_data_files"
+QUAC_data_files <- "C:\\Users\\eschumacher\\Documents\\GitHub\\QUAC_insitu_exsitu\\QUAC_data_files"
 
-QUAC_analysis_results <- "C:\\Users\\eschumacher\\Documents\\GitHub\\QUAC_diversity\\QUAC_analyses\\Results"
+QUAC_analysis_results <- "C:\\Users\\eschumacher\\Documents\\GitHub\\QUAC_insitu_exsitu\\QUAC_analyses\\Results"
 
 ################################
 ########## Load files ##########
 ################################
 setwd(QUAC_data_files)
 
-##convert to a genind 
-arp2gen(paste0(QUAC_data_files, "\\QUAC_genind\\QUAC_garden_wild_clean.arp"))
+##convert to a genind if not already converted 
+#arp2gen(paste0(QUAC_data_files, "\\QUAC_genind\\QUAC_garden_wild_clean.arp"))
 
 ##load in genind for QUAC
-QUAC_wild_garden_gen <- read.genepop(paste0(QUAC_data_files, "\\QUAC_genind\\QUAC_garden_wild_clean.gen"), ncode = 3)
+QUAC_garden_wild_gen <- read.genepop(paste0(QUAC_data_files, "\\QUAC_genind\\QUAC_garden_wild_clean.gen"), ncode = 3)
 
 ##load in data frame 
-QUAC_wild_garden_df <- read.csv(paste0(QUAC_data_files, "\\QUAC_data_frames\\QUAC_wild_garden_df.csv"))
+QUAC_garden_wild_df <- read.csv(paste0(QUAC_data_files, "\\QUAC_data_frames\\QUAC_garden_wild_clean_df.csv"))
 
 ##rename individuals in the genind file
-rownames(QUAC_wild_garden_gen@tab) <- QUAC_wild_garden_df$Ind
+rownames(QUAC_garden_wild_gen@tab) <- QUAC_garden_wild_df$Ind
 
 ##rename population names 
-QUAC_popnames <- unique(QUAC_wild_garden_df$Pop)
+QUAC_popnames <- unique(QUAC_garden_wild_df$Pop)
 
-levels(QUAC_wild_garden_gen@pop) <- QUAC_popnames
+levels(QUAC_garden_wild_gen@pop) <- QUAC_popnames
 
 ##load in get allele category function
-source("C:\\Users\\eschumacher\\Documents\\GitHub\\QUAC_diversity\\QUAC_analyses\\RScripts\\Fa_sample_funcs.R")
+source("C:\\Users\\eschumacher\\Documents\\GitHub\\QUAC_insitu_exsitu\\QUAC_analyses\\RScripts\\Fa_sample_funcs.R")
 
 ##load in functions
 colMax <- function(data) sapply(data, max, na.rm = TRUE)
@@ -55,12 +61,12 @@ sample.pop<-function(genind_obj,vect_pop_ID,vect_samp_sizes){
 ############ Comparing wild and garden populations #########
 ############################################################
 ##calculate genetic diversity statistics 
-QUAC_wild_hexp <- summary(seppop(QUAC_wild_garden_gen)$Wild)[7]
-QUAC_garden_hexp <- summary(seppop(QUAC_wild_garden_gen)$Garden)[7]
+QUAC_wild_hexp <- summary(seppop(QUAC_garden_wild_gen)$Wild)[7]
+QUAC_garden_hexp <- summary(seppop(QUAC_garden_wild_gen)$Garden)[7]
 
 ##calculate allelic richness
-QUAC_wild_allrich <- allelic.richness(seppop(QUAC_wild_garden_gen)$Wild)$Ar
-QUAC_garden_allrich <- allelic.richness(seppop(QUAC_wild_garden_gen)$Garden)$Ar
+QUAC_wild_allrich <- allelic.richness(seppop(QUAC_garden_wild_gen)$Wild)$Ar
+QUAC_garden_allrich <- allelic.richness(seppop(QUAC_garden_wild_gen)$Garden)$Ar
 
 ##create gendiv data frame 
 QUAC_gendiv_df <- matrix(nrow = 30, ncol = 3)
@@ -116,19 +122,19 @@ QUAC_all_exist <- matrix(nrow = 1, ncol = 9)
 QUAC_wild_capt <- matrix(nrow = 1, ncol = 10)
 
 ##seppop genind 
-QUAC_seppop <- seppop(QUAC_wild_garden_gen)
+QUAC_seppop <- seppop(QUAC_garden_wild_gen)
 
 ##calculate number of individuals per pop
-n_ind_p_pop <- table(QUAC_wild_garden_gen@pop)
+n_ind_p_pop <- table(QUAC_garden_wild_gen@pop)
 
 ##convert to genpop
-QUAC_wild_garden_genpop <- genind2genpop(QUAC_wild_garden_gen)
+QUAC_garden_wild_genpop <- genind2genpop(QUAC_garden_wild_gen)
 
 # allele_cat<-get.allele.cat(Spp_genpop, region_makeup, 2, n_ind_p_pop,n_drop=n_to_drop)	
-QUAC_allele_cat <- get.allele.cat(QUAC_wild_garden_genpop, c(1:2), 2, n_ind_p_pop)	
+QUAC_allele_cat <- get.allele.cat(QUAC_garden_wild_genpop, c(1:2), 2, n_ind_p_pop)	
 
 ##create alleles captured by gardens 
-n_ind_W<-table(QUAC_wild_garden_gen@pop)[2];  n_ind_G<-table(QUAC_wild_garden_gen@pop)[1]; 
+n_ind_W<-table(QUAC_garden_wild_gen@pop)[2];  n_ind_G<-table(QUAC_garden_wild_gen@pop)[1]; 
 QUAC_alleles_cap <- colSums(QUAC_seppop[[1]]@tab,na.rm=T)
 
 ##create a data frame with all of the alleles existing by species

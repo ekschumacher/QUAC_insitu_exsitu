@@ -13,9 +13,9 @@ library(diveRsity)
 ############ Directories ############
 #####################################
 ##set directory to all butternut files 
-QUAC_data_files <- "C:\\Users\\eschumacher\\Documents\\GitHub\\QUAC_diversity\\QUAC_data_files"
+QUAC_data_files <- "C:\\Users\\eschumacher\\Documents\\GitHub\\QUAC_insitu_exsitu\\QUAC_data_files"
 
-QUAC_analysis_results <- "C:\\Users\\eschumacher\\Documents\\GitHub\\QUAC_diversity\\QUAC_analyses\\Results"
+QUAC_analysis_results <- "C:\\Users\\eschumacher\\Documents\\GitHub\\QUAC_insitu_exsitu\\QUAC_analyses\\Results"
 
 ########################################
 ########### Load in Files ##############
@@ -133,3 +133,5 @@ s.class(QUAC_wildpop_pca$li, fac = pop(QUAC_wildpop_gen),
         col = QUAC_colors[c(2:6)], 
         axesel=FALSE, cstar=0, cpoint=2, clabel = 1, addaxes = TRUE)
 dev.off()
+
+sessionInfo()

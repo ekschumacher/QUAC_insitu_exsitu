@@ -19,9 +19,9 @@ library(pegas)
 #####################################
 ############ Directories ############
 #####################################
-QUAC_data_files <- "C:\\Users\\eschumacher\\Documents\\GitHub\\QUAC_diversity\\QUAC_data_files"
+QUAC_data_files <- "C:\\Users\\eschumacher\\Documents\\GitHub\\QUAC_insitu_exsitu\\QUAC_data_files"
 
-QUAC_analysis_results <- "C:\\Users\\eschumacher\\Documents\\GitHub\\QUAC_diversity\\QUAC_analyses\\Results"
+QUAC_analysis_results <- "C:\\Users\\eschumacher\\Documents\\GitHub\\QUAC_insitu_exsitu\\QUAC_analyses\\Results"
 
 #######################################
 ########## Load genind files ##########
@@ -30,58 +30,54 @@ QUAC_analysis_results <- "C:\\Users\\eschumacher\\Documents\\GitHub\\QUAC_divers
 setwd(QUAC_data_files)
 
 ##convert to a genind 
-#arp2gen(paste0(QUAC_data_files, "\\QUAC_genind\\QUAC_allpop_clean.arp"))
+#arp2gen(paste0(QUAC_data_files, "\\QUAC_allpop_genind\\QUAC_allpop_clean.arp"))
 
-##load in genind for QUAC
-QUAC_gen <- read.genepop("QUAC_genind\\QUAC_allpop_clean.gen", ncode = 3)
+##load in QUAC genind file with all pops 
+QUAC_allpop_gen <- read.genepop("QUAC_allpop_genind\\QUAC_allpop_clean.gen", ncode = 3)
 
 ##load garden and wild genind separately -- without missing data or clones 
-QUAC_garden_gen <- read.genepop("QUAC_genind\\QUAC_garden_clean.gen", ncode = 3)
-QUAC_wild_gen <- read.genepop("QUAC_genind\\QUAC_wild_clean.gen", ncode = 3)
+QUAC_garden_gen <- read.genepop("QUAC_allpop_genind\\Garden_Wild\\QUAC_garden_clean.gen", ncode = 3)
+QUAC_wild_gen <- read.genepop("QUAC_allpop_genind\\Garden_Wild\\QUAC_wild_clean.gen", ncode = 3)
 
 ##load in data frame 
 QUAC_allpop_df <- read.csv("QUAC_data_frames\\QUAC_allpop_clean.csv")
 
 ##rename individuals in the genind file
-rownames(QUAC_gen@tab) <- QUAC_allpop_df$ID
+rownames(QUAC_allpop_gen@tab) <- QUAC_allpop_df$ID
 
 ##create population name lists
 QUAC_popnames <- unique(QUAC_allpop_df$Pop)
 
 ##rename pops in genind
-levels(QUAC_gen@pop) <- QUAC_popnames
+levels(QUAC_allpop_gen@pop) <- QUAC_popnames
 #levels(QUAC_garden_gen@pop) <- QUAC_garden_names
 #levels(QUAC_wild_gen@pop) <- QUAC_wild_names
 
 ############################################################################
 ####### Run Genetic Diversity Checks like LD, HWE, Null Alleles  ###########
 ############################################################################
-##create list 
-QUAC_nullall_pop <- list()
 ##calculate null alleles 
-for(i in 1:length(QUAC_popnames)){
-  
-  QUAC_nullall_pop[[i]] <- null.all(seppop(QUAC_gen)[[i]])$null.allele.freq$summary1
-  
-}
+QUAC_nullall_pop <- null.all(QUAC_allpop_gen)
 
 ##create null allele table
-QUAC_null_all_df <- matrix(nrow = length(rownames(QUAC_null_all$null.allele.freq$summary1)),
-                         ncol = length(colnames(QUAC_null_all$null.allele.freq$summary1)))
+QUAC_null_all_df <- data.frame(QUAC_nullall_pop$null.allele.freq$summary2)
 
-QUAC_null_all_df <- QUAC_null_all$null.allele.freq$summary1
+##round to the 3rd sigfig
+QUAC_null_all_df <- signif(QUAC_null_all_df, 3)
 
 ####calculate HWE deviations
 ##bn HWE test
-QUAC_hwe_pop <- seppop(QUAC_gen) %>% lapply(hw.test, B = 1000)
+QUAC_hwe_pop <- seppop(QUAC_allpop_gen) %>% lapply(hw.test, B = 1000)
 
 ##create table by populations
 QUAC_HWE_allpop_df <- sapply(QUAC_hwe_pop, "[", i = TRUE, j = 3)
 ##name columns
 colnames(QUAC_HWE_allpop_df) <- QUAC_popnames
+##round to the 3rd digit
+QUAC_HWE_allpop_df <- signif(QUAC_HWE_allpop_df, 3)
 
 ###calculate linkage disequilibrium 
-QUAC_ld <- pair.ia(QUAC_gen, sample = 1000)
+QUAC_ld <- pair.ia(QUAC_allpop_gen, sample = 1000)
 QUAC_ld_df <- data.frame(round(QUAC_ld,digits = 2))
 
 ##write out null allele document 
@@ -107,7 +103,7 @@ for(a in 1:length(QUAC_pop_type_df)) {
 
 
 ##create a list to save all the data frames 
-QUAC_gendiv_sumstat_list <- list()
+QUAC_allpop_gendiv_sumstat_list <- list()
 
 #######Garden Wild comparison 
 QUAC_pop_type <- c("garden","wild")
@@ -143,11 +139,11 @@ for(pop in 1:length(QUAC_pop_type_gen)){
   QUAC_allrich_mean <- colMeans(allelic.richness(QUAC_temp_gen)$Ar)	
   
   ##create data frame 
-  QUAC_gendiv_sumstat_df <- signif(cbind(QUAC_ind, QUAC_nall, QUAC_allrich_mean, QUAC_hexp_mean),3)
+  QUAC_allpop_gendiv_sumstat_df <- signif(cbind(QUAC_ind, QUAC_nall, QUAC_allrich_mean, QUAC_hexp_mean),3)
   
   ##name columns and rows 
-  rownames(QUAC_gendiv_sumstat_df) <- QUAC_pop_names
-  colnames(QUAC_gendiv_sumstat_df) <- c("Ind", "MLG", "Number of Alleles", "Allelic Richness", "Expected Heterozygosity")
+  rownames(QUAC_allpop_gendiv_sumstat_df) <- QUAC_pop_names
+  colnames(QUAC_allpop_gendiv_sumstat_df) <- c("Ind", "MLG", "Number of Alleles", "Allelic Richness", "Expected Heterozygosity")
   
      if(pop == 2){
     
@@ -175,11 +171,11 @@ for(pop in 1:length(QUAC_pop_type_gen)){
         QUAC_lonlat_df <- cbind(QUAC_mean_lon, QUAC_mean_lat)
         QUAC_lonlat_df <- QUAC_lonlat_df[c(2:6),]
     
-      QUAC_gendiv_sumstat_df <- cbind(QUAC_lonlat_df, QUAC_gendiv_sumstat_df)
+      QUAC_allpop_gendiv_sumstat_df <- cbind(QUAC_lonlat_df, QUAC_allpop_gendiv_sumstat_df)
     
      }
   
   ##write out csv 
-  write.csv(QUAC_gendiv_sumstat_df, paste0(QUAC_analysis_results, "\\Sum_Stats\\", QUAC_pop_type[[pop]],"_gendiv_sumstat_df.csv"))
+  write.csv(QUAC_allpop_gendiv_sumstat_df, paste0(QUAC_analysis_results, "\\Sum_Stats\\", QUAC_pop_type[[pop]],"_gendiv_sumstat_df.csv"))
   
 }

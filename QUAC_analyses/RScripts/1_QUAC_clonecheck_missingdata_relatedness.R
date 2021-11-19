@@ -85,9 +85,9 @@ QUAC_relate_ind_remove <- unique(QUAC_halfsib_names_cleanback) ##260 of these in
 ##now limit genind by these names 
 QUAC_relate_red_gen <- QUAC_genind_nomd[!rownames(QUAC_genind_nomd@tab) %in% QUAC_relate_ind_remove,]
 ##and export to genalex
-genind2genalex(QUAC_relate_red_gen, file="QUAC_data_frames\\QUAC_relate_red_gen.csv")
+genind2genalex(QUAC_relate_red_gen, file="QUAC_data_frames\\Relate_Red\\QUAC_relate_red_gen.csv")
 ##limit data frames 
 QUAC_red_relate_df <- QUAC_rel_df[!QUAC_rel_df$Ind %in% QUAC_relate_ind_remove,]
 ##write out file 
-write.csv(QUAC_red_relate_df, "QUAC_data_frames\\QUAC_red_relate_df.csv")
+write.csv(QUAC_red_relate_df, "QUAC_data_frames\\Relate_Red\\QUAC_red_relate_df.csv")
 

@@ -125,20 +125,20 @@ QUAC_wild_capt <- matrix(nrow = 1, ncol = 10)
 QUAC_seppop <- seppop(QUAC_garden_wild_gen)
 
 ##calculate number of individuals per pop
-n_ind_p_pop <- table(QUAC_garden_wild_gen@pop)
+n_ind_p_pop <- table(QUAC_seppop[[2]])
 
 ##convert to genpop
-QUAC_garden_wild_genpop <- genind2genpop(QUAC_garden_wild_gen)
+QUAC_wild_genpop <- genind2genpop(QUAC_seppop[[2]])
 
 # allele_cat<-get.allele.cat(Spp_genpop, region_makeup, 2, n_ind_p_pop,n_drop=n_to_drop)	
-QUAC_allele_cat <- get.allele.cat(QUAC_garden_wild_genpop, c(1:2), 2, n_ind_p_pop)	
+QUAC_allele_cat <- get.allele.cat(QUAC_wild_genpop, 1, 1, as.numeric(n_ind_p_pop[2]), glob_only = TRUE)	
 
 ##create alleles captured by gardens 
 n_ind_W<-table(QUAC_garden_wild_gen@pop)[2];  n_ind_G<-table(QUAC_garden_wild_gen@pop)[1]; 
 QUAC_alleles_cap <- colSums(QUAC_seppop[[1]]@tab,na.rm=T)
 
 ##create a data frame with all of the alleles existing by category
-for (i in 1:9) QUAC_all_exist[,i]<- (sum((QUAC_allele_cat[[i]])> paste0(dup_all_list[[k]]),na.rm=T))
+for (i in 1:9) QUAC_all_exist[,i]<- sum((QUAC_allele_cat[[i]])> 0, na.rm=T)
 
 ##now determine how many wild alleles were captured per category 
 for (j in 1:length(QUAC_allele_cat)) QUAC_wild_capt[,j]<-round(sum(QUAC_alleles_cap[QUAC_allele_cat[[j]]] > 0)/length(QUAC_allele_cat[[j]]),4)
@@ -161,30 +161,35 @@ write.csv(QUAC_allele_cap_table, paste0(QUAC_analysis_results, "\\Wild_Garden_Co
 ##################################
 ### Replicate Allele Capture #####
 ##################################
-##QUAC loop to determine how many duplicate copies of alleles garden pops had in comparison to wild populations
-QUAC_garden_gen <- seppop(QUAC_garden_wild_gen)[[1]]
-QUAC_wild_gen <- seppop(QUAC_garden_wild_gen)[[2]]
-##now combine into a list 
-QUAC_list_gw <- list(QUAC_garden_gen, QUAC_wild_gen)
-##replicate # list 
-rep_list <- c(0,1,2)
-
-##write out a table to write duplicate capture
-QUAC_rep_all_df <- matrix(nrow = length(QUAC_list_gw), ncol = 3)
-
-##now write a list to look at duplicate allele capture 
-for(i in 1:length(QUAC_list_gw)){
-  for(j in 1:length(rep_list)){
-
-  QUAC_rep_all_df[i,j] <- sum(colSums(na.omit(QUAC_list_gw[[i]]@tab)) > paste0(rep_list[[j]]))
+##create a table to determine allelic capture in each category with duplication 
+#create list with duplicates 
+dup_reps <- c(0:10)
+#create a data frame for alleles existing
+QUAC_all_exist_dup <- matrix(nrow = length(dup_reps), ncol = length(QUAC_allele_cat))
+##create a duplicate data frame captured 
+QUAC_wild_cap_dup <- matrix(nrow = length(dup_reps), ncol = length(QUAC_allele_cat))
+##create a data frame with combo of the two 
+QUAC_wild_cap_all_dup_df <- matrix(nrow = length(dup_reps), ncol = length(QUAC_allele_cat))
+#run this code through a loop code 
+for (j in 1:length(QUAC_allele_cat)) {
+  for(k in 1:length(dup_reps)){
     
+    ##first calculate how many alleles exist in each category in wild pops 
+    QUAC_all_exist_dup[k,j]<- sum(QUAC_alleles_cap[QUAC_allele_cat[[j]]] > dup_reps[[k]])
+    ##second, calculate the percentages of duplicate alleles captured in gardens 
+    QUAC_wild_cap_dup[k,j] <- sum(QUAC_alleles_cap[QUAC_allele_cat[[j]]] > dup_reps[[k]])/length(QUAC_allele_cat[[j]])
+    ##finally, combine dfs
+    QUAC_wild_cap_all_dup_df[k,j] <- paste0(signif(QUAC_wild_cap_dup[k,j]*100, 3), "% (", signif(QUAC_all_exist_dup[k,j], 3), ")")
   }
 }
+##update table 
+colnames(QUAC_wild_cap_all_dup_df) <- list_allele_cat
+rownames(QUAC_wild_cap_all_dup_df) <- c("One Copy", "> 1 Copy", "> 2 Copies", "> 3 Copies", 
+                                        "> 4 Copies", "> 5 Copies", "> 6 Copies", "> 7 Copies", "> 8 Copies",
+                                        "> 9 Copies", "> 10 Copies")
 
-##name table 
-rownames(QUAC_rep_all_df) <- c("Garden", "Wild")
-colnames(QUAC_rep_all_df) <- c("Single_Copy", "Duplicate_Copies", "Triplicate_Copies")
+##write out duplicate table 
+write.csv(QUAC_wild_cap_all_dup_df, paste0(QUAC_analysis_results, "\\Wild_Garden_Comparison\\QUAC_wild_cap_all_dup_df.csv"))
 
-##write out table 
-write.csv(QUAC_rep_all_df, paste0(QUAC_analysis_results,"\\Wild_Garden_Comparison\\all_rep_df.csv"))
-
+##write out session info
+sessionInfo()

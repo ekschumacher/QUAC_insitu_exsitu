@@ -65,13 +65,12 @@ for(first in 1:length(QUAC_pop_list)){
 
 ##replacce NAs with zeroes 
 QUAC_dist[is.na(QUAC_dist)] <- 0
-
 QUAC_fst_df[is.na(QUAC_fst_df)] <- 0
 
-##run relationship
+##create a linear regression
 QUAC_fst_dist <- lm(QUAC_fst_df[lower.tri(QUAC_fst_df)]~QUAC_dist[lower.tri(QUAC_dist)])
 
-##plot distance and fst 
+##visualize the isolation by distance relationship with p-value
 pdf(paste0(QUAC_analysis_results, "/Clustering/QUAC_Dist_Fst.pdf"))
 plot(QUAC_fst_df[lower.tri(QUAC_fst_df)]~QUAC_dist[lower.tri(QUAC_dist)], pch = 17, ylim = c(0,0.13), 
      xlim = c(0,200),

@@ -1,4 +1,8 @@
+<<<<<<< HEAD:QUAC_data_files/QUAC_adegenet_files/Garden_Wild/QUAC_garden_wild_clean.gen
 "Scores for garden and wild QUAC individuals, cleaned for missing data and clones, with all garden individuals separated into one populations (pop1) and all wild individuals separated into another population (pop2)" 
+=======
+"QUAC individuals with all garden individuals combined into one population (pop1) and all wild individuals combined into one population (pop2) cleaned for missing data and clones" 
+>>>>>>> 2f55e630afd8dcf7d88c1c7efa061286b458a0d8:QUAC_data_files/QUAC_genind/QUAC_garden_wild_clean.gen
 0C11 
 1G13
 G07 

@@ -132,59 +132,41 @@ QUAC_allele_cat <- get.allele.cat(QUAC_wild_genpop, 1, 1, as.numeric(n_ind_p_pop
 n_ind_W<-table(QUAC_garden_wild_gen@pop)[2];  n_ind_G<-table(QUAC_garden_wild_gen@pop)[1]; 
 QUAC_alleles_cap <- colSums(QUAC_seppop[[1]]@tab,na.rm=T)
 
-##create a data frame with all of the alleles existing by category
-for (i in 1:9) QUAC_all_exist[,i]<- sum((QUAC_allele_cat[[i]])> 0, na.rm=T)
+#######create table for % alleles captured by frequency and how many duplicates were present  
+#create list with duplicates 
+dup_reps <- c(0:99)
 
-##now determine how many wild alleles were captured per category 
-for (j in 1:length(QUAC_allele_cat)) QUAC_wild_capt[,j]<-round(sum(QUAC_alleles_cap[QUAC_allele_cat[[j]]] > 0)/length(QUAC_allele_cat[[j]]),4)
-  
+#create a data frame to store the total alleles existing 
+QUAC_all_exist_df <- matrix(nrow = length(dup_reps), ncol = length(QUAC_allele_cat))
+##create a duplicate data frame captured 
+QUAC_wild_cap_df <- matrix(nrow = length(dup_reps), ncol = length(QUAC_allele_cat))
+
 ##combine this into one table 
-QUAC_allele_cap_table <- matrix(nrow = 1, ncol = length(list_allele_cat))
+QUAC_allele_cap_table <- matrix(nrow = length(dup_reps), ncol = length(list_allele_cat))
 
 ##add rownames and colnames 
 colnames(QUAC_allele_cap_table) <- list_allele_cat
+##add rownames
+rownames(QUAC_allele_cap_table) <- c(paste0(seq(1:100), rep(" or more copies")))
 
 ##run loop to generate allelic capture table 
-for(m in 1:length(QUAC_all_exist[1,])){
+#the outer loop is calculating how many copies of each allele in each category exists
+#the inner loop is calculating the percent capture of each allele in each frequency category 
+for(dup in 1:length(dup_reps)){
+    for(cat in 1:length(list_allele_cat)){
+  
+      ##create a data frame with all of the alleles existing by category
+      ###QUAC_all_exist_dup[k,j]<- sum(QUAC_alleles_cap[QUAC_allele_cat[[j]]] > dup_reps[[k]])
+      QUAC_all_exist_df[dup,cat]<- sum((QUAC_allele_cat[[cat]])> dup_reps[[dup]])
+      
+      ##now determine how many wild alleles were captured per category 
+      QUAC_wild_cap_df[dup,cat]<-round(sum(QUAC_alleles_cap[QUAC_allele_cat[[cat]]] > dup_reps[[dup]])/length(QUAC_allele_cat[[cat]]),4)
+      
+      QUAC_allele_cap_table[dup,cat] <- paste0(signif((QUAC_wild_cap_df[dup,cat]),3), "(", signif(QUAC_all_exist_df[dup,cat],3), ")")
     
-  QUAC_allele_cap_table[,m] <- paste0(signif((QUAC_wild_capt[,m]*100),3), "%", "(", signif(QUAC_all_exist[,m],3), ")")
-
+    }
 }
 
 write.csv(QUAC_allele_cap_table, "QUAC_allele_cap_df.csv")
-
-##################################
-### Replicate Allele Capture #####
-##################################
-##create a table to determine allelic capture in each category with duplication 
-#create list with duplicates 
-dup_reps <- c(0:10)
-#create a data frame for alleles existing
-QUAC_all_exist_dup <- matrix(nrow = length(dup_reps), ncol = length(QUAC_allele_cat))
-##create a duplicate data frame captured 
-QUAC_wild_cap_dup <- matrix(nrow = length(dup_reps), ncol = length(QUAC_allele_cat))
-##create a data frame with combo of the two 
-QUAC_wild_cap_all_dup_df <- matrix(nrow = length(dup_reps), ncol = length(QUAC_allele_cat))
-#run this code through a loop code 
-for (j in 1:length(QUAC_allele_cat)) {
-  for(k in 1:length(dup_reps)){
-    
-    ##first calculate how many alleles exist in each category in wild pops 
-    QUAC_all_exist_dup[k,j]<- sum(QUAC_alleles_cap[QUAC_allele_cat[[j]]] > dup_reps[[k]])
-    ##second, calculate the percentages of duplicate alleles captured in gardens 
-    QUAC_wild_cap_dup[k,j] <- sum(QUAC_alleles_cap[QUAC_allele_cat[[j]]] > dup_reps[[k]])/length(QUAC_allele_cat[[j]])
-    ##finally, combine dfs
-    QUAC_wild_cap_all_dup_df[k,j] <- paste0(signif(QUAC_wild_cap_dup[k,j]*100, 3), "% (", signif(QUAC_all_exist_dup[k,j], 3), ")")
-  }
-}
-##update table 
-colnames(QUAC_wild_cap_all_dup_df) <- list_allele_cat
-rownames(QUAC_wild_cap_all_dup_df) <- c("One Copy", "> 1 Copy", "> 2 Copies", "> 3 Copies", 
-                                        "> 4 Copies", "> 5 Copies", "> 6 Copies", "> 7 Copies", "> 8 Copies",
-                                        "> 9 Copies", "> 10 Copies")
-
-##write out duplicate table 
-write.csv(QUAC_wild_cap_all_dup_df, "QUAC_wild_cap_all_dup_df.csv")
-
-##write out session info
+###write session info out
 sessionInfo()

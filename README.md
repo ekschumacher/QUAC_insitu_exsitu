@@ -1,15 +1,16 @@
 <b><p><h1 style="color:red;font-size:20px;"> Project Description</b></p></h1>
 
-This repo contains code for determining how well wild genetic diversity for the rare oak species <i>Quercus acerifolia </i> was captured in <i>ex situ</i> collections. (In this repo, <i>Quercus acerifolia</i> is abbreviated to QUAC). <i>Q. acerifolia </i> is a rare oak native to Arkansas with only five wild populations and around 600 wild individuals. The wild individuals for this project were collected from 174 wild individuals during a sampling trip by Dr. Sean Hoban and Bailie Fredlock in 2019. The botanic garden individuals were collected in collaboration with 15 different botanic gardens (Bartlett Tree Research Laboratories, Missouri Botanical Garden, The Morton Arboretum, Huntington Botanical Gardens, United States National Arboretum, Arboretum Pouyouleix, Denver Botanic Gardens, Arnold Arboretum, Trompenburg Tuinen & Arboretum, Meise Botanic Garden, Peckerwood, Zoo and BG Plzeň, Morris Arboretum, University of Washington Botanic Gardens, Forstbotanischer Garten Tharandt, Moore Farms Botanical Garden, Chicago Botanic Gardens) and resulted in data collection from 277 botanic garden individuals. 
+This repo contains code for determining how well wild genetic diversity for the rare oak species <i>Quercus acerifolia </i> was captured in <i>ex situ</i> collections. (In this repo, <i>Quercus acerifolia</i> is abbreviated to QUAC). <i>Q. acerifolia </i> is a rare oak native to Arkansas with only five wild populations and around 600 wild individuals. Leaf samples of the wild individuals for this project were collected from 174 wild individuals during a sampling trip by colleagues in 2019. Samples of the botanic garden individuals were collected in collaboration with 15 different botanic gardens (Bartlett Tree Research Laboratories, Missouri Botanical Garden, The Morton Arboretum, Huntington Botanical Gardens, United States National Arboretum, Arboretum Pouyouleix, Denver Botanic Gardens, Arnold Arboretum, Trompenburg Tuinen & Arboretum, Meise Botanic Garden, Peckerwood, Zoo and BG Plzeň, Morris Arboretum, University of Washington Botanic Gardens, Forstbotanischer Garten Tharandt, Moore Farms Botanical Garden, Chicago Botanic Gardens) and resulted in data collection from 277 botanic garden individuals. 
 
 <p>We aimed to determine if <i>Quercus acerifolia </i> was well conserved in botanic gardens by:</p>
 <ol start="1">
-<li>Determining if we see a significant difference in the genetic diversity between wild and garden populations</li>
-<li>Identifying if all genetic clusters are conserved in botanic gardens</li>
-<li>And also identifying what strategies allowed for the best capture of diversity</li>
+<li>Quantifying the difference in the genetic diversity (using several metrics) between wild and garden populations</li>
+<li>Quantifying the percentage of wild occurring alleles which are conserved in botanic gardens</li>
+<li>Identifying which wild genetic clusters are conserved in botanic gardens</li>
+<li>Identifying what strategies (e.g. minimum sample size) allowed for the best capture of diversity</li>
 </ol> 
   
-Therefore, to accomplish these goals, we used the code in this repo to clean data genetic, calculate diversity and structure, and then visualize it in figures. 
+Code in this repo will clean data genetic, calculate diversity and structure, calculate levels of allele capture and create visualizations. 
 
 <b><p><h1 style="color:red;font-size:20px;">Folder Descriptions</b></p></h1>
 

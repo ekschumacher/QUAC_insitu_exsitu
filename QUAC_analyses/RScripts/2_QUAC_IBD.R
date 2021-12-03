@@ -11,25 +11,17 @@ library(adegenet)
 library(hierfstat)
 library(geosphere)
 
-#####################################
-############ Directories ############
-#####################################
-##set directory to all butternut files 
-QUAC_data_files <- "C:/Users/eschumacher/Documents/GitHub/QUAC_insitu_exsitu/QUAC_data_files"
-
-QUAC_analysis_results <- "C:/Users/eschumacher/Documents/GitHub/QUAC_insitu_exsitu/QUAC_analyses/Results"
-
 ################################
 ########## Load files ##########
 ################################
-setwd(QUAC_data_files)
+setwd("../../QUAC_data_files")
 
 ##load in genepop files as genind objects
-QUAC_wild_gen <- read.genepop(paste0(QUAC_data_files, "/QUAC_adegenet_files/Garden_Wild/QUAC_wild_clean.gen"), ncode = 3)
+QUAC_wild_gen <- read.genepop("QUAC_adegenet_files/Garden_Wild/QUAC_wild_clean.gen", ncode = 3)
 ##load in data frame with all scores
-QUAC_wild_df <- read.csv(paste0(QUAC_data_files, "/QUAC_data_frames/Garden_Wild/QUAC_wild_clean_df.csv"))
+QUAC_wild_df <- read.csv("QUAC_data_frames/Garden_Wild/QUAC_wild_clean_df.csv")
 ##load in data frame with summary stats
-QUAC_sumstat_df <- read.csv(paste0(QUAC_analysis_results, "/Sum_Stats/wild_gendiv_sumstat_df.csv"))
+QUAC_sumstat_df <- read.csv("../QUAC_analyses/Results/Sum_Stats/QUAC_wild_gendiv_sumstat_df.csv")
 
 ###create population name list
 QUAC_pop_list <- unique(QUAC_wild_df$Pop)

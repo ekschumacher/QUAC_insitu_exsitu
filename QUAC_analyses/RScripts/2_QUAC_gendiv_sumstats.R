@@ -16,18 +16,11 @@ library(hierfstat)
 library(PopGenReport)
 library(pegas)
 
-#####################################
-############ Directories ############
-#####################################
-QUAC_data_files <- "C:/Users/eschumacher/Documents/GitHub/QUAC_insitu_exsitu/QUAC_data_files"
-
-QUAC_analysis_results <- "C:/Users/eschumacher/Documents/GitHub/QUAC_insitu_exsitu/QUAC_analyses/Results"
-
 #######################################
 ########## Load genind files ##########
 #######################################
 ##set working directory to load in data files
-setwd(QUAC_data_files)
+setwd("../../QUAC_data_files")
 
 ##convert to a genepop file if needed 
 #arp2gen(paste0(QUAC_data_files, "QUAC_adegenet_files/QUAC_allpop_clean.arp"))
@@ -44,15 +37,13 @@ QUAC_wild_gen <- read.genepop("QUAC_adegenet_files/Garden_Wild/QUAC_wild_clean.g
 QUAC_allpop_df <- read.csv("QUAC_data_frames/QUAC_allpop_clean.csv")
 
 ##rename individuals in the genind file
-rownames(QUAC_allpop_gen@tab) <- QUAC_allpop_df$ID
+rownames(QUAC_allpop_gen@tab) <- QUAC_allpop_df$Ind
 
 ##create population name lists
 QUAC_popnames <- unique(QUAC_allpop_df$Pop)
 
 ##rename pops in genind
 levels(QUAC_allpop_gen@pop) <- QUAC_popnames
-#levels(QUAC_garden_gen@pop) <- QUAC_garden_names
-#levels(QUAC_wild_gen@pop) <- QUAC_wild_names
 
 ############################################################################
 ####### Run Genetic Diversity Checks like LD, HWE, Null Alleles  ###########
@@ -82,16 +73,21 @@ QUAC_ld <- pair.ia(QUAC_allpop_gen, sample = 1000)
 QUAC_ld_df <- data.frame(round(QUAC_ld,digits = 2))
 
 ##write out null allele document 
-write.csv(QUAC_null_all_df, paste0(QUAC_analysis_results, "/Sum_Stats/QUAC_null_all_df.csv"))
-write.csv(QUAC_HWE_allpop_df, paste0(QUAC_analysis_results, "/Sum_Stats/QUAC_HWE_df.csv"))
-write.csv(QUAC_ld_df, paste0(QUAC_analysis_results, "/Sum_Stats/QUAC_ld_df.csv"))
+write.csv(QUAC_null_all_df, "../QUAC_analyses/Results/Sum_Stats/QUAC_null_all_df.csv")
+write.csv(QUAC_HWE_allpop_df, "../QUAC_analyses/Results/Sum_Stats/QUAC_HWE_df.csv")
+write.csv(QUAC_ld_df, "../QUAC_analyses/Results/Sum_Stats/QUAC_ld_df.csv")
 
 ###########################################
 ########## Genetic Stats by Pop ###########
 ###########################################
 ##Garden vs. wild diversity capture 
+#create lists for loop of the object and files used in analyses
 QUAC_pop_type_gen <- c("QUAC_garden_clean.gen", "QUAC_wild_clean.gen")
-QUAC_pop_type_df <- list.files(path = "QUAC_data_frames/Garden_Wild", pattern = "_df.csv$")
+QUAC_pop_type_df <- c("QUAC_garden_clean_df.csv", "QUAC_wild_clean_df.csv")
+#create list of 'pop type' for naming output files
+QUAC_pop_type <- c("QUAC_garden","QUAC_wild")
+
+##create data frame list 
 QUAC_pop_df_list <- list()
 
 ##first read in data frames in
@@ -105,16 +101,14 @@ for(a in 1:length(QUAC_pop_type_df)) {
 ##create a list to save all the data frames 
 QUAC_allpop_gendiv_sumstat_list <- list()
 
-#######Garden Wild comparison 
-QUAC_pop_type <- c("garden","wild")
-
-##create all rich list for statistical comparison
+##create lists for genetic diversity statistics 
 QUAC_allrich_list <- list()
 QUAC_hexp_list <- list()
 
 ##write loop to calculate all summary stats 
 for(pop in 1:length(QUAC_pop_type_gen)){
-  
+ 
+  ##load in genepop file as a genind object
   QUAC_temp_gen <- read.genepop(paste0("QUAC_adegenet_files/Garden_Wild/", QUAC_pop_type_gen[[pop]]), ncode = 3)
   
   ##rename rownames
@@ -176,6 +170,6 @@ for(pop in 1:length(QUAC_pop_type_gen)){
      }
   
   ##write out csv 
-  write.csv(QUAC_allpop_gendiv_sumstat_df, paste0(QUAC_analysis_results, "/Sum_Stats/", QUAC_pop_type[[pop]],"_gendiv_sumstat_df.csv"))
+  write.csv(QUAC_allpop_gendiv_sumstat_df, paste0("../QUAC_analyses/Results/Sum_Stats/", QUAC_pop_type[[pop]], "_gendiv_sumstat_df.csv"))
   
 }

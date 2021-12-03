@@ -130,6 +130,8 @@ QUAC_allele_cat <- list()
 QUAC_all_exist_df <- matrix(nrow = (length(dup_reps)), ncol = length(list_allele_cat))
 #create df of wild alleles captured by gardens
 QUAC_wild_cap_df <- matrix(nrow = (length(dup_reps)), ncol = length(list_allele_cat))
+##data frame to record allele capture code
+QUAC_allele_cap <-matrix(nrow = (length(dup_reps)), ncol = length(list_allele_cat))
 
 ##run loop to generate allelic capture table 
 #the outer loop is calculating how many copies of each allele in each category exists
@@ -145,16 +147,17 @@ for(ndrop in c(0,2)){
       QUAC_allele_cat <- get.allele.cat(QUAC_wild_genpop, 1, 1, as.numeric(n_ind_p_pop), n_drop = ndrop, glob_only = TRUE)	
       
       ##create a data frame with all of the alleles existing by category
-      QUAC_all_exist_df[dup, cat] <- sum((QUAC_allele_cat[[cat]])> dup_reps[[dup]])
+      QUAC_all_exist_df[dup, cat] <- round(sum(QUAC_alleles_cap[QUAC_allele_cat[[cat]]] > dup_reps[[dup]]))
       
       ##now determine how many wild alleles were captured per category 
       QUAC_wild_cap_df[dup, cat] <- round(sum(QUAC_alleles_cap[QUAC_allele_cat[[cat]]] > dup_reps[[dup]])/length(QUAC_allele_cat[[cat]]),4)
       
       ##code to store as one data frame 
-      #QUAC_allele_cap[dup, cat] <- paste0(signif((QUAC_wild_cap_df[dup,cat, ndrop]),3), "(", signif(QUAC_all_exist_df[dup,cat, ndrop],3), ")")
+      QUAC_allele_cap[dup, cat] <- paste0(signif((QUAC_wild_cap_df[dup,cat]*100),3), "% (", signif(QUAC_all_exist_df[dup,cat],3), ")")
       
     }
   }
+  
   ##format tables
   #alleles existing
   rownames(QUAC_all_exist_df) <- paste0(c(1:10), " or more copies")
@@ -162,10 +165,14 @@ for(ndrop in c(0,2)){
   #percent capture of allele types by gardens
   rownames(QUAC_wild_cap_df) <- paste0(c(1:10), " or more copies")
   colnames(QUAC_wild_cap_df) <- list_allele_cat
-  
+  #comparison of percent of wild alleles captured in garden 
+  rownames(QUAC_allele_cap) <- paste0(c(1:10), " or more copies")
+  colnames(QUAC_allele_cap) <- list_allele_cat
+
   ##write out data frames
   write.csv(QUAC_all_exist_df, paste0("QUAC_all_exist_df", n_drop_file, ".csv"))
   write.csv(QUAC_wild_cap_df, paste0("QUAC_wild_cap_df", n_drop_file, ".csv"))
+  write.csv(QUAC_allele_cap, paste0("QUAC_all_cap_garden_df", n_drop_file, ".csv"))
 }
 
 ###write session info out

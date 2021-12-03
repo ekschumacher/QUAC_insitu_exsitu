@@ -24,14 +24,14 @@ setwd("../../QUAC_data_files")
 QUAC_garden_wild_gen <- read.genepop("QUAC_adegenet_files/Garden_Wild/QUAC_garden_wild_clean.gen", ncode = 3)
 
 ##load in data frame 
-QUAC_garden_wild_df <- read.csv("QUAC_data_frames/QUAC_garden_wild_clean_df.csv")
+QUAC_garden_wild_df <- read.csv("QUAC_data_frames/Garden_Wild/QUAC_garden_wild_clean_df.csv")
 
 ##rename individuals in genind object
-rownames(QUAC_garden_wild_gen@tab) <- QUAC_garden_wild_df$Ind
+rownames(QUAC_garden_wild_gen@tab) <- QUAC_garden_wild_df$ID
 
 ##rename population names in the genind object
 #create pop name list
-QUAC_popnames <- unique(QUAC_garden_wild_df$Pop)
+QUAC_popnames <- unique(QUAC_garden_wild_df$POP)
 #rename populations in the genind object
 levels(QUAC_garden_wild_gen@pop) <- QUAC_popnames
 
@@ -40,16 +40,6 @@ source("../QUAC_analyses/RScripts/Fa_sample_funcs.R")
 
 ##create functions to run code 
 colMax <- function(data) sapply(data, max, na.rm = TRUE)
-sample.pop<-function(genind_obj,vect_pop_ID,vect_samp_sizes){
-  p<-length(vect_pop_ID)
-  if (p>1) {
-    for (p in 1:length(vect_pop_ID))
-      alleles[p,]<-colSums(genind_obj[[vect_pop_ID[p]]]@tab[sample(1:nrow(genind_obj[[vect_pop_ID[p]]]@tab), vect_samp_sizes[p]),],na.rm=T)
-    alleles<-colSums(alleles)
-  } else {alleles<-colSums(genind_obj[[vect_pop_ID[p]]]@tab[sample(1:nrow(genind_obj[[vect_pop_ID[p]]]@tab), vect_samp_sizes[p]),],na.rm=T)}
-  
-  alleles
-}
 
 ############################################################
 ############ Comparing wild and garden populations #########
@@ -111,62 +101,72 @@ write.csv(QUAC_garden_wild_results, "QUAC_garden_wild_gendiv_dif_df.csv")
 ####################################
 ##list out allele categories
 list_allele_cat<-c("global","glob_v_com","glob_com","glob_lowfr","glob_rare","reg_rare","loc_com_d1","loc_com_d2","loc_rare")
-
-##create matrices to store allele frequency/allele capture code 
-QUAC_all_exist <- matrix(nrow = 1, ncol = 9)
-QUAC_wild_capt <- matrix(nrow = 1, ncol = 10)
-
-##seppop genind 
+##seppop genind - we only want to use the wild pops to calculate the alleles existing for capture
 QUAC_seppop <- seppop(QUAC_garden_wild_gen)
 
 ##calculate number of individuals per pop
 n_ind_p_pop <- as.numeric(table(QUAC_seppop[[2]]@pop))
 
-##convert to a genpop object
+##convert the wild genind object to a genpop object
 QUAC_wild_genpop <- genind2genpop(QUAC_seppop[[2]])
 
-##calculate 	
-QUAC_allele_cat <- get.allele.cat(QUAC_wild_genpop, 1, 1, as.numeric(n_ind_p_pop), glob_only = TRUE)	
-
-##create alleles captured by gardens 
+##create documents for comparison 
 n_ind_W<-table(QUAC_garden_wild_gen@pop)[2];  n_ind_G<-table(QUAC_garden_wild_gen@pop)[1]; 
 QUAC_alleles_cap <- colSums(QUAC_seppop[[1]]@tab,na.rm=T)
 
 #######create table for % alleles captured by frequency and how many duplicates were present  
 #create list with duplicates 
-dup_reps <- c(0:99)
+dup_reps <- c(0:9)
 
-#create a data frame to store the total alleles existing 
-QUAC_all_exist_df <- matrix(nrow = length(dup_reps), ncol = length(QUAC_allele_cat))
-##create a duplicate data frame captured 
-QUAC_wild_cap_df <- matrix(nrow = length(dup_reps), ncol = length(QUAC_allele_cat))
+##create a table to store % alleles captured by gardens pops where no alleles are dropped 
+QUAC_allele_cap_table_ndrop0 <- matrix(nrow = length(dup_reps), ncol = length(list_allele_cat))
 
-##combine this into one table 
-QUAC_allele_cap_table <- matrix(nrow = length(dup_reps), ncol = length(list_allele_cat))
+##create a table to store % alleles captured by garden pops where alleles are dropped if there are fewer than 2
+QUAC_allele_cap_table_ndrop2 <- matrix(nrow = length(dup_reps), ncol = length(list_allele_cat))
 
-##add rownames and colnames 
-colnames(QUAC_allele_cap_table) <- list_allele_cat
-##add rownames
-rownames(QUAC_allele_cap_table) <- c(paste0(seq(1:100), rep(" or more copies")))
+######create arrays and lists to store results 
+QUAC_allele_cat <- list()
+#create allele existing df
+QUAC_all_exist_df <- matrix(nrow = (length(dup_reps)), ncol = length(list_allele_cat))
+#create df of wild alleles captured by gardens
+QUAC_wild_cap_df <- matrix(nrow = (length(dup_reps)), ncol = length(list_allele_cat))
 
 ##run loop to generate allelic capture table 
 #the outer loop is calculating how many copies of each allele in each category exists
 #the inner loop is calculating the percent capture of each allele in each frequency category 
-for(dup in 1:length(dup_reps)){
+for(ndrop in c(0,2)){
+  for(dup in 1:length(dup_reps)){
     for(cat in 1:length(list_allele_cat)){
-  
+      
+      if(ndrop == 0) n_drop_file <- "_dr_0"
+      if(ndrop == 2) n_drop_file <- ""
+      
+      ##first calculate the frequency categories of alleles in the wild individuals   	
+      QUAC_allele_cat <- get.allele.cat(QUAC_wild_genpop, 1, 1, as.numeric(n_ind_p_pop), n_drop = ndrop, glob_only = TRUE)	
+      
       ##create a data frame with all of the alleles existing by category
-      ###QUAC_all_exist_dup[k,j]<- sum(QUAC_alleles_cap[QUAC_allele_cat[[j]]] > dup_reps[[k]])
-      QUAC_all_exist_df[dup,cat]<- sum((QUAC_allele_cat[[cat]])> dup_reps[[dup]])
+      QUAC_all_exist_df[dup, cat] <- sum((QUAC_allele_cat[[cat]])> dup_reps[[dup]])
       
       ##now determine how many wild alleles were captured per category 
-      QUAC_wild_cap_df[dup,cat]<-round(sum(QUAC_alleles_cap[QUAC_allele_cat[[cat]]] > dup_reps[[dup]])/length(QUAC_allele_cat[[cat]]),4)
+      QUAC_wild_cap_df[dup, cat] <- round(sum(QUAC_alleles_cap[QUAC_allele_cat[[cat]]] > dup_reps[[dup]])/length(QUAC_allele_cat[[cat]]),4)
       
-      QUAC_allele_cap_table[dup,cat] <- paste0(signif((QUAC_wild_cap_df[dup,cat]),3), "(", signif(QUAC_all_exist_df[dup,cat],3), ")")
-    
+      ##code to store as one data frame 
+      #QUAC_allele_cap[dup, cat] <- paste0(signif((QUAC_wild_cap_df[dup,cat, ndrop]),3), "(", signif(QUAC_all_exist_df[dup,cat, ndrop],3), ")")
+      
     }
+  }
+  ##format tables
+  #alleles existing
+  rownames(QUAC_all_exist_df) <- paste0(c(1:10), " or more copies")
+  colnames(QUAC_all_exist_df) <- list_allele_cat
+  #percent capture of allele types by gardens
+  rownames(QUAC_wild_cap_df) <- paste0(c(1:10), " or more copies")
+  colnames(QUAC_wild_cap_df) <- list_allele_cat
+  
+  ##write out data frames
+  write.csv(QUAC_all_exist_df, paste0("QUAC_all_exist_df", n_drop_file, ".csv"))
+  write.csv(QUAC_wild_cap_df, paste0("QUAC_wild_cap_df", n_drop_file, ".csv"))
 }
 
-write.csv(QUAC_allele_cap_table, "QUAC_allele_cap_df.csv")
 ###write session info out
 sessionInfo()

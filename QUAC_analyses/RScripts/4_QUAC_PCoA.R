@@ -13,75 +13,67 @@ library(diveRsity)
 ########## Load in Files ############
 #####################################
 setwd("../../QUAC_data_files")
-##first, load in reduced genind with no half siblings
-QUAC_red_relate_gen <- read.genepop("QUAC_adegenet_files/Relate_Red/QUAC_relate_red_garden_wild.gen", ncode = 3)
-##load in data frame 
-QUAC_red_relate_df <- read.csv("QUAC_data_frames/Relate_Red/QUAC_red_relate_allpop_df.csv")
-###rename individuals 
-rownames(QUAC_red_relate_gen@tab) <- QUAC_red_relate_df$Ind
-##create population document 
-QUAC_pop_names <- unique(QUAC_red_relate_df$Pop)
-##name populations in genind file 
-levels(QUAC_red_relate_gen@pop) <- QUAC_pop_names
 
+##convert from arlequin files to genepop files if needed
+#arp2gen("QUAC_adegenet_files/Relate_Red/QUAC_relate_red_garden_wild.arp")
+#arp2gen("QUAC_adegenet_files/Relate_Red/QUAC_relate_red_wildpop.arp")
+#arp2gen("QUAC_adegenet_files/Relate_Red/QUAC_relate_red_garden_wildpops.arp")
+
+####Just wild population clustering 
+###load reduced genepop wild as a genind object
+QUAC_wildpop_gen <- read.genepop("QUAC_adegenet_files/Relate_Red/QUAC_relate_red_wildpop.gen", ncode = 3)
+##data frame 
+QUAC_wildpop_df <- read.csv("QUAC_data_frames/Relate_Red/QUAC_relate_red_wildpop_df.csv")
+##rename genind object with individual names and population names 
+rownames(QUAC_wildpop_gen@tab) <- QUAC_wildpop_df$Ind
+##create a vector of population name 
+QUAC_wildpop_names <- unique(QUAC_wildpop_df$Pop) 
+levels(QUAC_wildpop_gen@pop) <- QUAC_wildpop_names
+
+####garden/wild clustering
 ###load files to compare wild and garden individuals 
-QUAC_garden_wild_gen <- read.genepop(paste0(QUAC_data_files, "/QUAC_genind/Relate_Red/QUAC_relate_red_garden_wild.gen"), ncode = 3)
+QUAC_garden_wild_gen <- read.genepop("QUAC_adegenet_files/Relate_Red/QUAC_relate_red_garden_wild.gen", ncode = 3)
 ##load file to name pops and inds
-QUAC_garden_wild_df <- read.csv(paste0(QUAC_data_files, "/QUAC_data_frames/Relate_Red/QUAC_relate_red_garden_wild_df.csv"))
-##name inds and pops
+QUAC_garden_wild_df <- read.csv("QUAC_data_frames/Relate_Red/QUAC_relate_red_garden_wild_df.csv")
+##name inds and pops in genind object
 rownames(QUAC_garden_wild_gen@tab) <- QUAC_garden_wild_df$Ind
 levels(QUAC_garden_wild_gen@pop) <- unique(QUAC_garden_wild_df$Pop)
 
-######load files for all wild pops compared to garden 
-QUAC_garden_allwildpop_gen <- read.genepop(paste0(QUAC_data_files, "/QUAC_genind/Relate_Red/QUAC_relate_red_garden_allwildpop.gen"), ncode = 3)
-##load data frame 
-QUAC_garden_allwildpop_df <- read.csv(paste0(QUAC_data_files, "/QUAC_data_frames/Relate_Red/QUAC_relate_red_garden_allwildpop_df.csv"))
-##rename rows and pops 
-rownames(QUAC_garden_allwildpop_gen@tab) <- QUAC_garden_allwildpop_df$Ind
-levels(QUAC_garden_allwildpop_gen@pop) <- c("Garden","Porter","Magazine","Pryor","Sugarloaf","Kessler")
-
-#####load files for just wild PCA
-##genind
-QUAC_wildpop_gen <- read.genepop(paste0(QUAC_data_files, "/QUAC_genind/Relate_Red/QUAC_relate_red_allwildpop.gen"), ncode = 3)
-##data frame 
-QUAC_wildpop_df <- read.csv(paste0(QUAC_data_files, "/QUAC_data_frames/Relate_Red/QUAC_relate_red_allwildpop_df.csv"))
-##rename with rows and individual names 
-rownames(QUAC_wildpop_gen@tab) <- QUAC_wildpop_df$Ind
-levels(QUAC_wildpop_gen@pop) <- c("Porter","Magazine","Pryor","Sugarloaf","Kessler")
+###garden in one population compared with all five wild populations 
+##load in the genepop file as an adegenet genind object
+QUAC_garden_allwildpops_gen <- read.genepop("QUAC_adegenet_files/Relate_Red/QUAC_relate_red_garden_wildpops.gen", ncode = 3)
+##now load in the data frame 
+QUAC_garden_allwildpops_df <- read.csv("QUAC_data_frames/Relate_Red/QUAC_relate_red_garden_wildpops_df.csv")
+##now name individuals and populations within the genind object
+rownames(QUAC_garden_allwildpops_gen@tab) <- QUAC_garden_allwildpops_df$Ind
+levels(QUAC_garden_allwildpops_gen@pop) <- unique(QUAC_garden_allwildpops_df$Pop)
 
 ###########################
 ######### PCoA ############
 ###########################
-####first PCA looking at all the different populations 
-##now run PCA code 
-QUAC_tab <- tab(QUAC_red_relate_gen, freq=TRUE, NA.method="mean")
+####first run a PCA comparing all of the wild populations 
+QUAC_wildpop_tab <- tab(QUAC_wildpop_gen, freq=TRUE, NA.method="mean")
 ##now create PCA tab
-QUAC_pca <- dudi.pca(QUAC_tab, scale = FALSE)
+QUAC_wildpop_pca <- dudi.pca(QUAC_wildpop_tab, scale = FALSE)
 
-##create a data frame for the data frame 
-QUAC_allpop_pca_df <- data.frame(cbind(QUAC_pca$li$Axis1, QUAC_pca$li$Axis2, QUAC_red_relate_df$Pop))
-colnames(QUAC_allpop_pca_df) <- c("Axis1","Axis2","Pop")
+##create PCA data frame 
+QUAC_wildpop_pca_df <- data.frame(cbind(as.numeric(QUAC_wildpop_pca$li$Axis1), as.numeric(QUAC_wildpop_pca$li$Axis2), QUAC_wildpop_df$Pop))
+colnames(QUAC_wildpop_pca_df) <- c("Axis1","Axis2","Pop")
 
-##create new color column 
-QUAC_allpop_pca_df$Color <- NA
-
-for(i in 1:length(QUAC_pop_names)){
-  
-   QUAC_allpop_pca_df[QUAC_allpop_pca_df[,3] == QUAC_pop_names[[i]],][,4] <- funky(length(QUAC_pop_names))[[i]]
-  
-}
 ##figure out % variation explained 
-allpop_pc1 <- signif(((QUAC_pca$eig[1])/sum(QUAC_pca$eig))*100, 3)
-allpop_pc2 <- signif(((QUAC_pca$eig[2])/sum(QUAC_pca$eig))*100, 3)
-##create pdf of all pops 
-pdf(paste0(QUAC_analysis_results, "/Clustering/QUAC_allpop_pca.pdf"), width = 10, height = 8)
-##create a diagram of all populations 
-plot(QUAC_allpop_pca_df[,1], QUAC_allpop_pca_df[,2], pch = 17, col = QUAC_allpop_pca_df[,4], ylim = c(-2,2), xlim = c(-2,3),
-     xlab = paste0('PC1 (',allpop_pc1, "%)"), ylab = paste0("PC2 (", allpop_pc2, "%)"))
-abline(v = 0)
-abline(h = 0)
-legend("topright", legend = QUAC_pop_names, border = "black", bty = "o",
-       pt.cex = 1, cex = 0.8, pch = 17, col = unique(QUAC_allpop_pca_df[,4]), bg = "white")
+QUAC_wildpop_pc1 <- signif(((QUAC_wildpop_pca$eig[1])/sum(QUAC_wildpop_pca$eig))*100, 3)
+QUAC_wildpop_pc2 <- signif(((QUAC_wildpop_pca$eig[2])/sum(QUAC_wildpop_pca$eig))*100, 3)
+
+##create a ggplot 
+setwd("../QUAC_analyses/Results/Clustering")
+pdf("QUAC_wildpop_PCA.pdf", width = 10, height = 8)
+ggplot(QUAC_wildpop_pca_df, aes(x = as.numeric(QUAC_wildpop_pca_df$Axis1), y = as.numeric(QUAC_wildpop_pca_df$Axis2), 
+                                col = Pop)) + xlab(paste0("PC1 (", QUAC_wildpop_pc1, "%)")) + 
+  ylab(paste0("PC2 (", QUAC_wildpop_pc2, "%)")) +
+  geom_point() + scale_x_continuous( limits = c(-2,2)) + 
+  scale_x_continuous(limits = c(-2,2)) +
+  scale_color_manual(values=c("royalblue4", "darkolivegreen4", "darkseagreen2",
+                            "dodgerblue", "darkorchid")) + theme_bw() + stat_ellipse()
 
 dev.off()
 
@@ -90,41 +82,47 @@ dev.off()
 QUAC_garden_wild_tab <- tab(QUAC_garden_wild_gen, freq=TRUE, NA.method="mean")
 #now run PCA
 QUAC_garden_wild_pca <- dudi.pca(QUAC_garden_wild_tab, scale = FALSE, scannf = FALSE, nf = 2)
+
+##calculate % variation explained by axis 
+QUAC_garden_wild_pc1 <- signif(((QUAC_garden_wild_pca$eig[1])/sum(QUAC_garden_wild_pca$eig))*100, 3)
+QUAC_garden_wild_pc2 <- signif(((QUAC_garden_wild_pca$eig[2])/sum(QUAC_garden_wild_pca$eig))*100, 3)
+
 ##create pdf 
-pdf(paste0(QUAC_analysis_results, "/Clustering/QUAC_garden_wild_pca.pdf"), width = 10, height = 8)
+pdf("QUAC_garden_wild_pca.pdf", width = 10, height = 8)
 s.class(QUAC_garden_wild_pca$li, fac=pop(QUAC_garden_wild_gen),
         col=c("darkseagreen3", "forestgreen"),
         axesel=FALSE, cstar=0, cpoint=2, clabel = 1, addaxes = TRUE)
 dev.off()
 
-###### PCA with garden + all wild pops 
-QUAC_garden_allwildpop_tab <- tab(QUAC_garden_allwildpop_gen, freq=TRUE, NA.method="mean")
-##run PCA
-QUAC_garden_allwildpop_pca <- dudi.pca(QUAC_garden_allwildpop_tab, scannf = 2, scale = FALSE)
-
-##create color vector
-QUAC_colors <- c("darkslategray3","dodgerblue2","darkgreen","darkorchid","lightcoral", "cadetblue4")
-##write out PCoA 
-pdf(paste0(QUAC_analysis_results, "/Clustering/QUAC_garden_allwildpop_pca.pdf"))
-s.class(QUAC_pca$li, fac=pop(QUAC_garden_allwildpop_gen),
-       col=QUAC_colors,
-        axesel=FALSE, cstar=0, cpoint=2, clabel = 1, addaxes = TRUE)
-dev.off()
-
-#####PCA of all wild populations 
+#####PCA of garden vs. all wild populations populations 
 ##create tab document
-QUAC_wildpop_tab <- tab(QUAC_wildpop_gen, freq=TRUE, NA.method="mean")
+QUAC_garden_allwildpops_tab <- tab(QUAC_garden_allwildpops_gen, freq=TRUE, NA.method="mean")
 ##run PCA 
-QUAC_wildpop_pca <- dudi.pca(QUAC_wildpop_tab, scannf = FALSE, nf = 2, scale = FALSE)
+QUAC_garden_allwildpops_pca <- dudi.pca(QUAC_garden_allwildpops_tab, scannf = FALSE, nf = 2, scale = FALSE)
 ##calculate % variation explained by each axis 
-wildpop_pc1 <- signif(((QUAC_wildpop_pca$eig[1])/sum(QUAC_wildpop_pca$eig))*100, 3)
-wildpop_pc2 <- signif(((QUAC_wildpop_pca$eig[2])/sum(QUAC_wildpop_pca$eig))*100, 3)
+QUAC_garden_allwildpops_pc1 <- signif(((QUAC_garden_allwildpops_pca$eig[1])/sum(QUAC_garden_allwildpops_pca$eig))*100, 3)
+QUAC_garden_allwildpops_pc2 <- signif(((QUAC_garden_allwildpops_pca$eig[2])/sum(QUAC_garden_allwildpops_pca$eig))*100, 3)
+
+##create a data frame 
+QUAC_garden_allwildpops_pca_df <- data.frame(cbind(QUAC_garden_allwildpops_pca$li$Axis1,
+                                                   QUAC_garden_allwildpops_pca$li$Axis2,
+                                                   QUAC_garden_allwildpops_df$Pop))
+
+##put in colnames
+colnames(QUAC_garden_allwildpops_pca_df) <- c("Axis1","Axis2","Pop")
 
 ##write out data file 
-pdf(paste0(QUAC_analysis_results, "/Clustering/QUAC_wildpop_pca.pdf"), width = 10, height = 8)
-s.class(QUAC_wildpop_pca$li, fac = pop(QUAC_wildpop_gen),
-        col = QUAC_colors[c(2:6)], 
-        axesel=FALSE, cstar=0, cpoint=2, clabel = 1, addaxes = TRUE)
+pdf("QUAC_garden_wildpops_pca.pdf", width = 10, height = 8)
+
+ggplot(QUAC_garden_allwildpops_pca_df, aes(x = as.numeric(QUAC_garden_allwildpops_pca_df$Axis1), 
+                                           y = as.numeric(QUAC_garden_allwildpops_pca_df$Axis2), 
+                                col = Pop)) + xlab(paste0("PC1 (", QUAC_garden_allwildpops_pc1, "%)")) + 
+  ylab(paste0("PC2 (", QUAC_garden_allwildpops_pc2, "%)")) +
+  geom_point() + scale_x_continuous( limits = c(-2,2)) + 
+  scale_x_continuous(limits = c(-2,2)) +
+  scale_color_manual(values=c("hotpink","royalblue4", "darkolivegreen4", "darkseagreen2",
+                              "dodgerblue", "darkorchid")) + theme_bw() + stat_ellipse()
+
 dev.off()
 
 sessionInfo()

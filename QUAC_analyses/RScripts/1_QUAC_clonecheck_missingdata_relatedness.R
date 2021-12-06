@@ -70,7 +70,7 @@ write.csv(QUAC_nomd_nocl_rel_df, "QUAC_data_frames/Garden_Wild/QUAC_garden_wild_
 ###### Relatedness Analysis #######
 ###################################
 ##run relatedness analysis on the cleaned score data frame 
-QUAC_relatedness_df <- Demerelate(QUAC_nomnd_nocl_rel_df, object = T, value = "loiselle")
+QUAC_relatedness_df <- Demerelate(QUAC_nomd_nocl_rel_df, object = T, value = "loiselle")
 ##now identify how many individuals have greater than 25% relatedness = half siblings
 QUAC_halfsib_names <- names(which(unlist(QUAC_relatedness_df$Empirical_Relatedness) > 0.25))
 

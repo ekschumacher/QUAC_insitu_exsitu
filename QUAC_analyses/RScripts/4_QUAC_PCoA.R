@@ -8,6 +8,7 @@
 
 library(adegenet)
 library(diveRsity)
+library(ggplot2)
 
 #####################################
 ########## Load in Files ############
@@ -15,19 +16,19 @@ library(diveRsity)
 setwd("../../QUAC_data_files")
 
 ##convert from arlequin files to genepop files if needed
-#arp2gen("QUAC_adegenet_files/Relate_Red/QUAC_relate_red_garden_wild.arp")
-#arp2gen("QUAC_adegenet_files/Relate_Red/QUAC_relate_red_wildpop.arp")
+#arp2gen("QUAC_adegenet_files/Relate_Red/QUAC_relate_red_allpop_wild.arp")
+#arp2gen("QUAC_adegenet_files/Relate_Red/QUAC_relate_red_allpop_wild_garden.arp")
 #arp2gen("QUAC_adegenet_files/Relate_Red/QUAC_relate_red_garden_wildpops.arp")
 
 ####Just wild population clustering 
 ###load reduced genepop wild as a genind object
-QUAC_wildpop_gen <- read.genepop("QUAC_adegenet_files/Relate_Red/QUAC_relate_red_wildpop.gen", ncode = 3)
+QUAC_wildpop_gen <- read.genepop("QUAC_adegenet_files/Relate_Red/QUAC_relate_red_allpop_wild.gen", ncode = 3)
 ##data frame 
-QUAC_wildpop_df <- read.csv("QUAC_data_frames/Relate_Red/QUAC_relate_red_wildpop_df.csv")
+QUAC_wildpop_df <- read.csv("QUAC_data_frames/Relate_Red/QUAC_wild_relate_red_allpop_df.csv")
 ##rename genind object with individual names and population names 
 rownames(QUAC_wildpop_gen@tab) <- QUAC_wildpop_df$Ind
 ##create a vector of population name 
-QUAC_wildpop_names <- unique(QUAC_wildpop_df$Pop) 
+QUAC_wildpop_names <- c("Porter", "Magazine", "Pryor", "Sugarloaf", "Kessler")
 levels(QUAC_wildpop_gen@pop) <- QUAC_wildpop_names
 
 ####garden/wild clustering
@@ -37,13 +38,14 @@ QUAC_garden_wild_gen <- read.genepop("QUAC_adegenet_files/Relate_Red/QUAC_relate
 QUAC_garden_wild_df <- read.csv("QUAC_data_frames/Relate_Red/QUAC_relate_red_garden_wild_df.csv")
 ##name inds and pops in genind object
 rownames(QUAC_garden_wild_gen@tab) <- QUAC_garden_wild_df$Ind
-levels(QUAC_garden_wild_gen@pop) <- unique(QUAC_garden_wild_df$Pop)
+#name pops 
+levels(QUAC_garden_wild_gen) <- unique(QUAC_garden_wild_df$Pop)
 
 ###garden in one population compared with all five wild populations 
 ##load in the genepop file as an adegenet genind object
-QUAC_garden_allwildpops_gen <- read.genepop("QUAC_adegenet_files/Relate_Red/QUAC_relate_red_garden_wildpops.gen", ncode = 3)
+QUAC_garden_allwildpops_gen <- read.genepop("QUAC_adegenet_files/Relate_Red/QUAC_relate_red_allpop_wild_garden.gen", ncode = 3)
 ##now load in the data frame 
-QUAC_garden_allwildpops_df <- read.csv("QUAC_data_frames/Relate_Red/QUAC_relate_red_garden_wildpops_df.csv")
+QUAC_garden_allwildpops_df <- read.csv("QUAC_data_frames/Relate_Red/QUAC_relate_red_allpop_wild_garden_df.csv")
 ##now name individuals and populations within the genind object
 rownames(QUAC_garden_allwildpops_gen@tab) <- QUAC_garden_allwildpops_df$Ind
 levels(QUAC_garden_allwildpops_gen@pop) <- unique(QUAC_garden_allwildpops_df$Pop)
@@ -72,7 +74,7 @@ ggplot(QUAC_wildpop_pca_df, aes(x = as.numeric(QUAC_wildpop_pca_df$Axis1), y = a
   ylab(paste0("PC2 (", QUAC_wildpop_pc2, "%)")) +
   geom_point() + scale_x_continuous( limits = c(-2,2)) + 
   scale_x_continuous(limits = c(-2,2)) +
-  scale_color_manual(values=c("royalblue4", "darkolivegreen4", "darkseagreen2",
+  scale_color_manual(values=c("royalblue4", "darkolivegreen4", "darksalmon",
                             "dodgerblue", "darkorchid")) + theme_bw() + stat_ellipse()
 
 dev.off()
@@ -120,7 +122,7 @@ ggplot(QUAC_garden_allwildpops_pca_df, aes(x = as.numeric(QUAC_garden_allwildpop
   ylab(paste0("PC2 (", QUAC_garden_allwildpops_pc2, "%)")) +
   geom_point() + scale_x_continuous( limits = c(-2,2)) + 
   scale_x_continuous(limits = c(-2,2)) +
-  scale_color_manual(values=c("hotpink","royalblue4", "darkolivegreen4", "darkseagreen2",
+  scale_color_manual(values=c("darkgoldenrod1","royalblue4", "darkolivegreen4", "darksalmon",
                               "dodgerblue", "darkorchid")) + theme_bw() + stat_ellipse()
 
 dev.off()

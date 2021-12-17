@@ -101,6 +101,7 @@ write.csv(QUAC_garden_wild_results, "QUAC_garden_wild_gendiv_dif_df.csv")
 ####################################
 ##list out allele categories
 list_allele_cat<-c("global","glob_v_com","glob_com","glob_lowfr","glob_rare","reg_rare","loc_com_d1","loc_com_d2","loc_rare")
+
 ##seppop genind - we only want to use the wild pops to calculate the alleles existing for capture
 QUAC_seppop <- seppop(QUAC_garden_wild_gen)
 
@@ -170,9 +171,9 @@ for(ndrop in c(0,2)){
   colnames(QUAC_allele_cap) <- list_allele_cat
 
   ##write out data frames
-  write.csv(QUAC_all_exist_df, paste0("QUAC_all_exist_df", n_drop_file, ".csv"))
-  write.csv(QUAC_wild_cap_df, paste0("QUAC_wild_cap_df", n_drop_file, ".csv"))
-  write.csv(QUAC_allele_cap, paste0("QUAC_all_cap_garden_df", n_drop_file, ".csv"))
+  write.csv(QUAC_all_exist_df, paste0("C:/Users/eschumacher/Documents/GitHub/QUAC_insitu_exsitu/QUAC_analyses/Results/Wild_Garden_Comparison/QUAC_all_exist_df", n_drop_file, ".csv"))
+  write.csv(QUAC_wild_cap_df, paste0("C:/Users/eschumacher/Documents/GitHub/QUAC_insitu_exsitu/QUAC_analyses/Results/Wild_Garden_Comparison/QUAC_wild_cap_df", n_drop_file, ".csv"))
+  write.csv(QUAC_allele_cap, paste0("C:/Users/eschumacher/Documents/GitHub/QUAC_insitu_exsitu/QUAC_analyses/Results/Wild_Garden_Comparison/QUAC_all_cap_garden_df", n_drop_file, ".csv"))
 }
 
 ###write session info out

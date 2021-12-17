@@ -82,9 +82,6 @@ all_mean_ndrop0 <- all_mean_ndrop0[,1:9]
 colnames(all_mean_ndrop0) <- list_allele_cat
 all_mean_ndrop0 <- all_mean_ndrop0[-1,]
 
-##write out resampling code 
-write.csv(all_mean_ndrop0, "../QUAC_analyses/Results/Wild_Garden_Comparison/allelic_resampling_table.csv")
-
 
 ###plot resampling graph 
 pdf("../QUAC_analyses/Results/Wild_Garden_Comparison/all_resampling_ndrop0.pdf")
@@ -111,19 +108,28 @@ all_mean_ndrop2 <- all_mean_ndrop2[,1:9]
 colnames(all_mean_ndrop2) <- list_allele_cat
 all_mean_ndrop2 <- all_mean_ndrop2[-1,]
 
-###plot resampling graph 
-pdf("../QUAC_analyses/Results/Wild_Garden_Comparison/all_resampling_ndrop2.pdf")
+##write a loop to calculate minimum sample needed to capture at least 95% diversity
+##combine all mean data frames 
+all_mean_array <- array(c(as.matrix(all_mean_ndrop0), 
+                          as.matrix(all_mean_ndrop2)), 
+                          dim = c(170,9,2))
 
-plot(all_mean_ndrop2[,1], col = "red", pch = 20, xlab = "Number of Individuals", 
-     ylab = "Percent Diversity Capture", xlim = c(0,171), ylim = c(0,100), cex = 1.2,
-     main = "Percent Diversity Capture (Rare Alleles Dropped)")
-points(all_mean_ndrop0[,2], col = "firebrick", pch = 20, cex = 1.2)
-points(all_mean_ndrop0[,3], col = "darkorange3", pch = 20, cex = 1.2)
-points(all_mean_ndrop0[,4], col = "coral", pch = 20, cex = 1.2)
-points(all_mean_ndrop0[,5], col = "deeppink4", pch = 20, cex = 1.2)
+#create a data frame to store
+min_samp_95 <- matrix(nrow = 2, 
+                      ncol = length(list_allele_cat))
 
-legend('bottomright', legend = c("Global Alleles", "Globally Very Common Alleles", 
-                                 "Globally Common", "Global Low Frequency Alleles",
-                                 "Globally Rare Alleles"), pch = 20,
-       col = c("red", "firebrick", "darkorange3", "coral", "deeppink4"), pt.cex = 2)
-dev.off()
+##loop to calculate min sample size
+for(allmean in 1:2){
+  for(col in 1:length(list_allele_cat)){
+  
+    min_samp_95[allmean,col] <- which(all_mean_array[,col,allmean] >= 95)[1]
+  
+  }
+}
+##name rows and columns of the matrix 
+rownames(min_samp_95) <- c("N Ind for 95% (All Alleles)", 
+                           "N Ind for 95% (Rare Alleles Dropped)")
+colnames(min_samp_95) <- list_allele_cat
+
+##write out data frame 
+write.csv(min_samp_95, "../QUAC_analyses/Results/Wild_Garden_Comparison/QUAC_min_samp_95.csv")

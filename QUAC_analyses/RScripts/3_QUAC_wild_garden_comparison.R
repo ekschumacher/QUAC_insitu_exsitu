@@ -35,6 +35,7 @@ QUAC_popnames <- unique(QUAC_garden_wild_df$POP)
 #rename populations in the genind object
 levels(QUAC_garden_wild_gen@pop) <- QUAC_popnames
 
+
 ##load in function to calculate allele frequency categories
 source("../QUAC_analyses/RScripts/Fa_sample_funcs.R")
 

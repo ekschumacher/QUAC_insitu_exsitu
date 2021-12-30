@@ -87,3 +87,14 @@ colnames(QUAC_EST_mean_df) <- c("Allelic Richness", "Expected Heterozygosity")
 QUAC_EST_mean_df <- signif(QUAC_EST_mean_df, 3)
 ##write out matrix 
 write.csv(QUAC_EST_mean_df, "../QUAC_analyses/Results/Wild_Garden_Comparison/QUAC_EST_mean_df.csv")
+
+#####visualize results 
+##plot boxplots
+pdf("../QUAC_analyses/Results/Wild_Garden_Comparison/QUAC_EST_boxplots.pdf")
+boxplot(hexp_list, names = c("Garden EST","Garden Genomic", "Wild EST", "Wild Genomic"), 
+        ylim = c(0,1), main = "Expected Heterozygosity Compared Over Garden, Wild, ESTs, and Genomic Microsatellite Regions")
+
+boxplot(allrich_list[[1]][,1], allrich_list[[2]][,1], allrich_list[[3]][,1], allrich_list[[4]][,1], 
+        ylim = c(0,25), names = c("Garden EST","Garden Genomic", "Wild EST", "Wild Genomic"),
+        main = "Allelic Richness Compared Over Garden, Wild, ESTs, and Genomic Microsatellite Regions")
+dev.off()

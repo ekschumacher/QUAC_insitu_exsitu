@@ -14,6 +14,7 @@ library(Demerelate)
 ##########################
 #    Convert to Genind   #
 ##########################
+
 #set working directory to load in data files 
 setwd("../../QUAC_data_files")
 
@@ -46,30 +47,31 @@ levels(QUAC_allpop_clean_gen@pop) <- QUAC_allpop_names
 ###################################################
 # Remove Clones and Individuals with missing data #
 ###################################################
+
 ###clone check 
-##convert to genelcone object
+#convert to genelcone object
 QUAC_geneclone <- as.genclone(QUAC_garden_wild_gen)
-##identify multi-locus genotypes (non-clones)
+#identify multi-locus genotypes (non-clones)
 QUAC_gen_id <- mlg.id(QUAC_geneclone)
-##function to pull out all clones into a list
+#function to pull out all clones into a list
 QUAC_clone_index <- which(sapply(QUAC_gen_id, function(x) length(x)>1))
-##create a list of ID with clones
+#create a list of ID with clones
 clones_ID <- list()
 for(clones in 1:length(QUAC_clone_index)) clones_ID[[clones]] <- QUAC_gen_id[[QUAC_clone_index[[clones]]]]
-##now remove clones from the matrix 
+#now remove clones from the matrix 
 QUAC_noclones <- clonecorrect(QUAC_geneclone)
-##convert back to a genind object
+#convert back to a genind object
 QUAC_genind_nocl <- genclone2genind(QUAC_noclones) ##left with 456 individuals, there were 7 clones 
 
 ##remove individuals with too much missing data 
 QUAC_genind_nomd <- missingno(QUAC_genind_nocl, type = "geno", cutoff = 0.25, quiet = FALSE, freq = FALSE) ##there were 7 individuals with too much missing data, left with 449 individuals
 
-##output to genalex file if needed 
+#output to genalex csv if needed 
 genind2genalex(QUAC_genind_nomd, file="QUAC_data_frames/Garden_Wild/QUAC_garden_wild_clean_genalex.csv", 
               overwrite = TRUE)
-##open genalex and convert to arp file to load new genepop into R  
+
 ##remove the individuals from the relatedness df that have been removed for missing data and clones
-QUAC_nomd_nocl_rel_df <- QUAC_rel_df[QUAC_rel_df$ID %in% rownames(QUAC_genind_nomd@tab),]
+QUAC_nomd_nocl_df <- QUAC_rel_df[QUAC_rel_df$ID %in% rownames(QUAC_genind_nomd@tab),]
 
 ##write out data frame 
 write.csv(QUAC_nomd_nocl_rel_df, "QUAC_data_frames/Garden_Wild/QUAC_garden_wild_clean_df.csv")
@@ -77,6 +79,7 @@ write.csv(QUAC_nomd_nocl_rel_df, "QUAC_data_frames/Garden_Wild/QUAC_garden_wild_
 #########################
 # Relatedness Analysis #
 ########################
+
 ##Run relatedness analysis on wild and garden individuals separately 
 #first separate data frames
 QUAC_garden_rel_df <- QUAC_nomd_nocl_rel_df[QUAC_nomd_nocl_rel_df$POP == "Garden",] ; QUAC_wild_rel_df <- QUAC_nomd_nocl_rel_df[QUAC_nomd_nocl_rel_df$POP == "Wild",]

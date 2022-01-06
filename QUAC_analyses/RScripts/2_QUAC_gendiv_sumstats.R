@@ -13,7 +13,6 @@ library(poppr)
 library(hierfstat)
 library(PopGenReport)
 library(pegas)
-library(dplyr)
 
 #########################
 #   Load Data Files     #

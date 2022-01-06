@@ -11,9 +11,9 @@ library(adegenet)
 library(poppr)
 library(Demerelate)
 
-##########################
-#    Convert to Genind   #
-##########################
+#############################
+#    Convert to Genind      #
+#############################
 
 #set working directory to load in data files 
 setwd("../../QUAC_data_files")
@@ -44,10 +44,9 @@ rownames(QUAC_allpop_clean_gen@tab) <- QUAC_allpop_clean_df$Ind
 QUAC_allpop_names <- unique(QUAC_allpop_clean_df$Pop)
 levels(QUAC_allpop_clean_gen@pop) <- QUAC_allpop_names
 
-###################################################
-# Remove Clones and Individuals with missing data #
-###################################################
-
+############################################################
+#    Remove Clones and Individuals with missing data       #
+############################################################
 ###clone check 
 #convert to genelcone object
 QUAC_geneclone <- as.genclone(QUAC_garden_wild_gen)
@@ -74,15 +73,14 @@ genind2genalex(QUAC_genind_nomd, file="QUAC_data_frames/Garden_Wild/QUAC_garden_
 QUAC_nomd_nocl_df <- QUAC_rel_df[QUAC_rel_df$ID %in% rownames(QUAC_genind_nomd@tab),]
 
 ##write out data frame 
-write.csv(QUAC_nomd_nocl_rel_df, "QUAC_data_frames/Garden_Wild/QUAC_garden_wild_clean_df.csv")
+write.csv(QUAC_nomd_nocl_df, "QUAC_data_frames/Garden_Wild/QUAC_garden_wild_clean_df.csv")
 
-#########################
-# Relatedness Analysis #
-########################
-
+#################################
+#      Relatedness Analysis     #
+#################################
 ##Run relatedness analysis on wild and garden individuals separately 
 #first separate data frames
-QUAC_garden_rel_df <- QUAC_nomd_nocl_rel_df[QUAC_nomd_nocl_rel_df$POP == "Garden",] ; QUAC_wild_rel_df <- QUAC_nomd_nocl_rel_df[QUAC_nomd_nocl_rel_df$POP == "Wild",]
+QUAC_garden_rel_df <- QUAC_nomd_nocl_df[QUAC_nomd_nocl_df$POP == "Garden",] ; QUAC_wild_rel_df <- QUAC_nomd_nocl_df[QUAC_nomd_nocl_df$POP == "Wild",]
 #first, create wild only genind
 QUAC_garden_gen <- seppop(QUAC_genind_nomd)$Garden
 QUAC_wild_gen <- seppop(QUAC_genind_nomd)$Wild

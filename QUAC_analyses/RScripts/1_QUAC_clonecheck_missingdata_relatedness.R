@@ -1,6 +1,6 @@
-##############This script details the analyses run on Quercus aceriflia genotype files to prepare them 
-#############for final genetic analyses (referred to as QUAC for brevity here)
-###########For the project looking at genetic diversity capture in garden populations compared to wild populations
+###This script details the analyses run on Quercus aceriflia genotype files to prepare them 
+##for final genetic analyses (referred to as QUAC for brevity here)
+#For the project looking at genetic diversity capture in garden populations compared to wild populations
 
 #########################
 #        Libraries      #
@@ -11,9 +11,9 @@ library(adegenet)
 library(poppr)
 library(Demerelate)
 
-#############################
-#    Convert to Genind      #
-#############################
+#########################
+#   Load Data Files     #
+#########################
 
 #set working directory to load in data files 
 setwd("../../QUAC_data_files")

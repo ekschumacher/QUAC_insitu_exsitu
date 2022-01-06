@@ -1,6 +1,6 @@
-,Mean_Lon,Mean_Lat,Ind,MLG,Number of Alleles,Allelic Richness,Expected Heterozygosity
-PorterMountain_W,-94.06266839,34.38626827,41,41,94,4.14,0.548
-MagazineMountain_W,-93.66012083,35.16931358,36,36,95,4.57,0.573
-PryorMountain_W,-93.85066318,34.38758018,33,33,83,3.96,0.528
-Sugar_Loaf_Mountains_W,-94.37265304,35.07348007,54,54,99,4.28,0.557
-Kessler_Mountain_W,-94.21754763,36.03131738,8,8,74,4.93,0.628
+"","Mean_Lon","Mean_Lat","N","MLG","Number of Alleles","Allelic Richness","Expected Heterozygosity"
+"PorterMountain_W",-94.0626683902439,34.3862682682927,41,41,94,4.14,0.548
+"MagazineMountain_W",-93.6601208333333,35.1693135833333,36,36,95,4.57,0.573
+"PryorMountain_W",-93.8506631818182,34.3875801818182,33,33,83,3.96,0.528
+"Sugar_Loaf_Mountains_W",-94.372653037037,35.0734800740741,54,54,99,4.28,0.557
+"Kessler_Mountain_W",-94.217547625,36.031317375,8,8,74,4.93,0.628

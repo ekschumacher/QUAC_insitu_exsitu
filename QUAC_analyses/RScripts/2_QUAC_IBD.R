@@ -1,19 +1,20 @@
-################This script calculates the Fst between wild Q. acerifolia populations 
-###############and compares it to the distance between populations 
-##############First we calculate the Fst between wild Q. acerifolia populations 
-#############and then run a linear regression between distance between populations and then run a Mantel test
+##This script calculates the Fst between wild Q. acerifolia populations and compares it to the 
+#distance between populations 
+#First we calculate the Fst between wild Q. acerifolia populations and then run 
+#a linear regression between distance between populations and then run a Mantel test
 
-##########################
-######## Libraries #######
-##########################
+#########################
+#        Libraries      #
+#########################
 
 library(adegenet)
 library(hierfstat)
 library(geosphere)
 
-################################
-########## Load files ##########
-################################
+#########################
+#   Load Data Files     #
+#########################
+#set working directory
 setwd("../../QUAC_data_files")
 
 ##load in genepop files as genind objects

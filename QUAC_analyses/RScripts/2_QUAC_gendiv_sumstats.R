@@ -31,7 +31,7 @@ QUAC_gardenpop_names <- QUAC_allpop_names[1:17]
 QUAC_wildpop_names <- QUAC_allpop_names[18:22]
 
 ##load in lon/lat data frame for wild pops
-QUAC_wild_lonlat_clean_df <- read.csv("QUAC_data_frames/QUAC_wild_lonlat_allpop_clean_df.csv")
+QUAC_wild_lonlat_allpop_clean_df <- read.csv("QUAC_data_frames/Garden_Wild/QUAC_wild_lonlat_allpop_clean_df.csv")[,-1]
 
 ############################################################
 #  Null Alleles, HWE Deviation, Linkage Disequilibrium     #

@@ -13,7 +13,6 @@ library(Demerelate)
 #########################
 #   Load Data Files     #
 #########################
-
 #set working directory to load in data files 
 setwd("../../QUAC_data_files")
 
@@ -27,14 +26,11 @@ QUAC_gen <- read.genepop("QUAC_adegenet_files/QUAC_allpop.gen", ncode = 3)
 QUAC_df <- read.csv("QUAC_data_frames/QUAC_allpop.csv")
 
 ##rename individuals in the genind object 
-rownames(QUAC_gen@tab) <- QUAC_df$Ind
+rownames(QUAC_gen@tab) <- QUAC_df[,1]
 
 ##create population name list and rename the populations in the genind object 
 QUAC_popnames <- unique(QUAC_df$Pop)
 levels(QUAC_gen@pop) <- QUAC_popnames
-
-##load in wild data frame of lon/lat coordinates of all individuals 
-QUAC_wild_lonlat_df <- read.csv("QUAC_data_frames/QUAC_wild_lonlat.csv")
 
 ############################################################
 #    Remove Clones and Individuals with missing data       #
@@ -62,7 +58,7 @@ genind2genalex(QUAC_genind_nomd, file="QUAC_data_frames/Garden_Wild/QUAC_garden_
               overwrite = TRUE)
 
 ##remove the individuals from the relatedness df that have been removed for missing data and clones
-QUAC_clean_df <- QUAC_df[QUAC_df$Ind %in% rownames(QUAC_genind_nomd@tab),]
+QUAC_clean_df <- QUAC_df[QUAC_df[,1] %in% rownames(QUAC_genind_nomd@tab),]
 
 ##write out data frame 
 write.csv(QUAC_clean_df, "QUAC_data_frames/Garden_Wild/QUAC_clean_df.csv")
@@ -70,46 +66,47 @@ write.csv(QUAC_clean_df, "QUAC_data_frames/Garden_Wild/QUAC_clean_df.csv")
 #################################
 #      Relatedness Analysis     #
 #################################
-##Run relatedness analysis on wild and garden individuals separately 
-#first separate data frames
-QUAC_garden_rel_df <- QUAC_clean_df[QUAC_clean_df$Garden_Wild == "Garden",] ; QUAC_wild_rel_df <- QUAC_clean_df[QUAC_clean_df$Garden_Wild == "Wild",]
+##create pop type list 
+pop_type_list <- c("Garden", "Wild")
 
-##combine files into lists 
-QUAC_rel <- list(QUAC_garden_rel_df[,-3], QUAC_wild_rel_df[,-3])
-QUAC_pop <- c("garden","wild")
-
-##create half-sib name list 
+##create list to store related individuals in each pop type 
 QUAC_ind_red_list <- list()
 
 ##loop to calculate relatedness for garden and wild individuals and reduce data files for relatedness
-for(rel in 1:length(QUAC_rel)){
+for(pop_type in 1:length(pop_type_list)){
+  
+  #limit data frame by pop_type
+  QUAC_df <- QUAC_clean_df[QUAC_clean_df$Garden_Wild == paste0(pop_type_list[[pop_type]]),]
+  
+  #limit genind object by pop_type 
+  QUAC_gen <- QUAC_genind_nomd[rownames(QUAC_genind_nomd@tab) %in% QUAC_df[,1],]
   
   #calculate relatedness between all individuals for either wild or garden df
-  QUAC_deme <- Demerelate(QUAC_rel[[rel]], object = T, value = "loiselle")
+  QUAC_rel <- Demerelate(QUAC_df[,-2], object = T, value = "loiselle")
   
   #extract just the names of highly related inds (half-sib or more)
-  QUAC_halfsib_names <- names(which(unlist(QUAC_deme$Empirical_Relatedness) > 0.25))
+  QUAC_halfsib_names <- names(which(unlist(QUAC_rel$Empirical_Relatedness) > 0.25))
   
   ##remove extra characters
   QUAC_halfsib_names_cleanfront <-  gsub("^.*\\.","", QUAC_halfsib_names)
+  
   ##remove extra name
-  QUAC_wild_halfsib_names_cleanback <- gsub("^.*\\_","", QUAC_halfsib_names_cleanfront)
+  QUAC_halfsib_names_cleanback <- gsub("^.*\\_","", QUAC_halfsib_names_cleanfront)
   
   ##create list of individuals to remove 
-  QUAC_ind_red_list[[rel]] <- unique(QUAC_wild_halfsib_names_cleanback)
+  QUAC_ind_red_list[[pop_type]] <- unique(QUAC_halfsib_names_cleanback)
   
   ##reduce data frame for related individuals 
-  QUAC_red_df <- QUAC_rel[[rel]][!QUAC_rel[[rel]]$ID %in% QUAC_ind_red,]
+  QUAC_rel_df <- QUAC_df[!QUAC_df[,1] %in% QUAC_ind_red_list[[pop_type]],]
   
   ##write csv of the reduced data frame 
-  write.csv(QUAC_red_df, paste0("QUAC_data_frames/Relate_Red/QUAC_", QUAC_pop[[rel]], "_red_df.csv"))
+  write.csv(QUAC_rel_df, paste0("QUAC_data_frames/Relate_Red/QUAC_", pop_type_list[[pop_type]], "_rel_df.csv"))
+  
+  ##now limit genind object by relatedness 
+  QUAC_rel_gen <- QUAC_gen[!rownames(QUAC_gen@tab) %in% QUAC_ind_red_list[[pop_type]],]
+  
+  ##write out genalex file
+  genind2genalex(QUAC_rel_gen, paste0("QUAC_data_frames/Relate_Red/QUAC_", pop_type_list[[pop_type]], 
+                                     "_rel_genalex.csv"), overwrite = TRUE)
   
 }
-
-###reduce genind files 
-QUAC_red_gen <- QUAC_genind_nomd[rownames(QUAC_genind_nomd@tab) %in% unlist(list(QUAC_ind_red_list[[1]], QUAC_ind_red_list[[2]])),]
-
-#output to genalex csv if needed 
-genind2genalex(QUAC_red_gen, file="QUAC_data_frames/Relate_Red/QUAC_red_genalex.csv", 
-               overwrite = TRUE)
-

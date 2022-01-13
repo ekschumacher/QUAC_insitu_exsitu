@@ -13,6 +13,7 @@ library(poppr)
 library(hierfstat)
 library(PopGenReport)
 library(pegas)
+library(diveRsity)
 
 #########################
 #   Load Data Files     #
@@ -20,15 +21,14 @@ library(pegas)
 ##set working directory to load in data files
 setwd("../../QUAC_data_files")
 
+###convert if necessary 
+#QUAC_clean_gen <- arp2gen("QUAC_adegenet_files/Garden_Wild/QUAC_clean_gen.arp")
+
 ##load in QUAC all pop genepop as a genind object
-QUAC_allpop_gen <- read.genepop("QUAC_adegenet_files/QUAC_allpop_clean.gen", ncode = 3)
+QUAC_clean_gen <- read.genepop("QUAC_adegenet_files/Garden_Wild/QUAC_clean.gen", ncode = 3)
 
 #load all pop data frames
-QUAC_allpop_df <- read.csv("QUAC_data_frames/QUAC_allpop_clean.csv")
-
-##create separate lists for wild and garden population names 
-QUAC_gardenpop_names <- QUAC_allpop_names[1:17]
-QUAC_wildpop_names <- QUAC_allpop_names[18:22]
+QUAC_allpop_df <- read.csv("QUAC_data_frames/Garden_Wild/QUAC_clean_df.csv")
 
 ##load in lon/lat data frame for wild pops
 QUAC_wild_lonlat_allpop_clean_df <- read.csv("QUAC_data_frames/Garden_Wild/QUAC_wild_lonlat_allpop_clean_df.csv")[,-1]

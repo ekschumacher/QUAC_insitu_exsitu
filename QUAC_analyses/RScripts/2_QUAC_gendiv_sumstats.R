@@ -28,7 +28,14 @@ setwd("../../QUAC_data_files")
 QUAC_clean_gen <- read.genepop("QUAC_adegenet_files/Garden_Wild/QUAC_clean.gen", ncode = 3)
 
 #load all pop data frames
-QUAC_allpop_df <- read.csv("QUAC_data_frames/Garden_Wild/QUAC_clean_df.csv")
+QUAC_allpop_df <- read.csv("QUAC_data_frames/Garden_Wild/QUAC_clean_df.csv")[,-1]
+
+##create a population name doc
+QUAC_pop_names <- unique(QUAC_allpop_df$Pop)
+levels(QUAC_clean_gen@pop) <- QUAC_pop_names
+
+##name individuals 
+rownames(QUAC_clean_gen@tab) <- QUAC_allpop_df$Ind
 
 ##load in lon/lat data frame for wild pops
 QUAC_wild_lonlat_allpop_clean_df <- read.csv("QUAC_data_frames/Garden_Wild/QUAC_wild_lonlat_allpop_clean_df.csv")[,-1]
@@ -63,65 +70,48 @@ write.csv(QUAC_ld_df, "../QUAC_analyses/Results/Sum_Stats/QUAC_ld_df.csv")
 ###########################################
 #          Genetic Stats by Pop           #
 ###########################################
-##Garden vs. wild diversity capture 
-#create lists for loop of the object and files used in analyses
-QUAC_pop_type_gen <- list.files(path = "QUAC_adegenet_files/Garden_Wild", pattern = "allpop_clean.gen")
-QUAC_pop_type_df <- list.files(path = "QUAC_data_frames/Garden_Wild", pattern = "allpop_clean_df.csv")
-#create list of 'pop type' for naming output files
-QUAC_pop_type <- c("QUAC_garden","QUAC_wild")
+##create a list of pop types 
+pop_type_list <- c("Garden", "Wild")
+
+#create list of population names 
+QUAC_wildpop_names <- QUAC_pop_names[18:22]
+QUAC_gardenpop_names <- QUAC_pop_names[1:17]
 
 ##create data frame list 
 QUAC_pop_df_list <- list()
 
-##first read in data frames in
-for(a in 1:length(QUAC_pop_type_df)) {
-  
-  QUAC_pop_df_list[[a]] <- read.csv(paste0("QUAC_data_frames/Garden_Wild/", QUAC_pop_type_df[[a]]))
-
-}
-
-##create a list to save all the data frames 
-QUAC_allpop_gendiv_sumstat_list <- list()
-
-##create lists for genetic diversity statistics 
-QUAC_allrich_list <- list()
-QUAC_hexp_list <- list()
-
 ##write loop to calculate all summary stats 
-for(pop in 1:length(QUAC_pop_type_gen)){
- 
-  ##load in genepop file as a genind object
-  QUAC_temp_gen <- read.genepop(paste0("QUAC_adegenet_files/Garden_Wild/", QUAC_pop_type_gen[[pop]]), ncode = 3)
+for(pop_type in 1:length(pop_type_list)){
   
-  ##name pops  
-  if(pop == 1){
-    levels(QUAC_temp_gen@pop) <- QUAC_gardenpop_names
-  }else{
-    levels(QUAC_temp_gen@pop) <- QUAC_wildpop_names
-  }
+  #subset data frame by the pop type - garden or wild 
+  QUAC_df <- QUAC_allpop_df[QUAC_allpop_df$Garden_Wild == paste0(pop_type_list[[pop_type]]),]
   
-  ##rename rownames
-  rownames(QUAC_temp_gen@tab) <- QUAC_pop_df_list[[pop]][,1]
+  #then subset genind by pop type - garden of wild 
+  QUAC_gen <- QUAC_clean_gen[rownames(QUAC_clean_gen@tab) %in% QUAC_df$Ind,]
   
   ###start genetic analyses
-  QUAC_temp_sum <- summary(QUAC_temp_gen)
+  #create genetic summary of the genind file 
+  QUAC_sum <- summary(QUAC_gen)
   ##create poppr file 
-  QUAC_poppr <- poppr(QUAC_temp_gen)
+  QUAC_poppr <- poppr(QUAC_gen)
   ##save mean for final output table 
-  QUAC_hexp_mean <- QUAC_poppr[1:length(levels(QUAC_temp_gen@pop)),10]
+  QUAC_hexp_mean <- QUAC_poppr[1:length(levels(QUAC_gen@pop)),10]
   ##allele numbers by pop 
-  QUAC_nall <- QUAC_temp_sum$pop.n.all
+  QUAC_nall <- QUAC_sum$pop.n.all
   ##individual numbers
-  QUAC_ind <- QUAC_poppr[1:length(levels(QUAC_temp_gen@pop)), 2:3]
+  QUAC_ind <- QUAC_poppr[1:length(levels(QUAC_gen@pop)), 2:3]
   ##save allelic richness for comparison
-  QUAC_allrich_list[[pop]] <- allelic.richness(QUAC_temp_gen)$Ar
-  QUAC_allrich_mean <- colMeans(allelic.richness(QUAC_temp_gen)$Ar)	
+  QUAC_allrich_list <- allelic.richness(QUAC_gen)$Ar
+  QUAC_allrich_mean <- colMeans(allelic.richness(QUAC_gen)$Ar)	
   
   ##create data frame 
   QUAC_allpop_gendiv_sumstat_df <- signif(cbind(QUAC_ind, QUAC_nall, QUAC_allrich_mean, QUAC_hexp_mean),3)
    
   ##create extra columns for mean lon/lat 
-  if(pop == 2){
+  if(pop_type == 2){
+    
+    ##add coordinates to the data frame 
+    QUAC_wild_df <- cbind(QUAC_df[,c(1:2)], QUAC_wild_lonlat_allpop_clean_df[,c(3:4)], QUAC_df[,c(3:33)])
     
     ##Calculate mean longitude and latitude for each wild population
     #first create matrices
@@ -131,13 +121,13 @@ for(pop in 1:length(QUAC_pop_type_gen)){
     ##identifying mean longitude and latitude for each population 
           for(pop2 in QUAC_wildpop_names){
       
-              QUAC_mean_lon[pop2] <- mean(QUAC_pop_df_list[[pop]][QUAC_pop_df_list[[pop]]$Pop == pop2,][,3])
+              QUAC_mean_lon[pop2] <- mean(QUAC_wild_df[QUAC_wild_df$Pop == pop2,][,3])
               QUAC_mean_lon <- matrix(QUAC_mean_lon)
       
        }
           for(pop2 in QUAC_wildpop_names){
       
-                QUAC_mean_lat[pop2] <- mean(QUAC_pop_df_list[[pop]][QUAC_pop_df_list[[pop]]$Pop == pop2,][,4])
+                QUAC_mean_lat[pop2] <- mean(QUAC_wild_df[QUAC_wild_df$Pop == pop2,][,4])
                QUAC_mean_lat <- matrix(QUAC_mean_lat)
       
        }
@@ -158,6 +148,6 @@ for(pop in 1:length(QUAC_pop_type_gen)){
      }
   
   ##write out csv 
- write.csv(QUAC_allpop_gendiv_sumstat_df, paste0("../QUAC_analyses/Results/Sum_Stats/", QUAC_pop_type[[pop]], "_gendiv_sumstat_df.csv"))
+ write.csv(QUAC_allpop_gendiv_sumstat_df, paste0("../QUAC_analyses/Results/Sum_Stats/", pop_type_list[[pop_type]], "_gendiv_sumstat_df.csv"))
   
 }

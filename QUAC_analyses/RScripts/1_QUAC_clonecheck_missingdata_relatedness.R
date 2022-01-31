@@ -82,7 +82,7 @@ for(pop_type in 1:length(pop_type_list)){
   QUAC_gen <- QUAC_genind_nomd[rownames(QUAC_genind_nomd@tab) %in% QUAC_df[,1],]
   
   #calculate relatedness between all individuals for either wild or garden df
-  QUAC_rel <- Demerelate(QUAC_df[,-2], object = T, value = "loiselle")
+  QUAC_rel <- Demerelate(QUAC_df[,-3], object = T, value = "loiselle")
   
   #extract just the names of highly related inds (half-sib or more)
   QUAC_halfsib_names <- names(which(unlist(QUAC_rel$Empirical_Relatedness) > 0.25))

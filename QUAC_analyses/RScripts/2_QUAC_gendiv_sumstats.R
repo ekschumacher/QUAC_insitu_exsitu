@@ -4,6 +4,11 @@
 #allelic richness, number of alleles, mean longtitude and latitude 
 #for wild populations, and individual numbers. 
 #This table is included in full in the supplemental text of this manuscript.
+#When files are referred to as "clean" that means individuals 
+#that are clones and indviduals with too much missing data have been removed. 
+#When files and objects are titled "red" that means they have been reduced
+#for relatedness (25% or more related individuals are reduced to one individual
+#per phenotype)
 
 #########################
 #        Libraries      #
@@ -44,23 +49,23 @@ QUAC_wild_lonlat_allpop_clean_df <- read.csv("QUAC_data_frames/Garden_Wild/QUAC_
 ############################################################
 #  Null Alleles, HWE Deviation, Linkage Disequilibrium     #
 ############################################################
-####calculate null alleles 
+##calculate null alleles 
 QUAC_nullall_pop <- null.all(QUAC_clean_gen)
 #create null allele table
 QUAC_null_all_df <- signif(data.frame(QUAC_nullall_pop$null.allele.freq$summary2),3)
 
-####calculate HWE deviations
-##bn HWE test
+##calculate HWE deviations
+#bn HWE test
 QUAC_hwe_pop <- seppop(QUAC_clean_gen) %>% lapply(hw.test, B = 1000)
-##create table by populations
+#create table by populations
 QUAC_HWE_allpop_df <- sapply(QUAC_hwe_pop, "[", i = TRUE, j = 3)
-##name columns
+#name columns
 colnames(QUAC_HWE_allpop_df) <- QUAC_popnames
-##round to the 3rd digit
+#round to the 3rd digit
 QUAC_HWE_allpop_df <- signif(QUAC_HWE_allpop_df, 3)
 
-###calculate linkage disequilibrium 
-QUAC_ld <- pair.ia(QUAC_allpop_gen, sample = 1000)
+##calculate linkage disequilibrium 
+QUAC_ld <- pair.ia(QUAC_clean_gen, sample = 1000)
 QUAC_ld_df <- data.frame(round(QUAC_ld,digits = 2))
 
 ##write out null allele document 

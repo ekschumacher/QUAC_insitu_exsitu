@@ -44,10 +44,10 @@ rownames(QUAC_coords) <- QUAC_wildpop_names
 #convert to hierfstat format object 
 QUAC_hierfstat <- genind2hierfstat(QUAC_wild_gen)
 
-##run pairwise fst code 
+#run pairwise fst code 
 QUAC_fst_df <- pairwise.neifst(QUAC_hierfstat)
 
-##calculate geographic distances between mean locations
+#calculate geographic distances between mean locations
 QUAC_dist <- matrix(nrow = length(QUAC_wildpop_names), ncol = length(QUAC_wildpop_names))
 
 for(first in 1:length(QUAC_wildpop_names)){
@@ -56,14 +56,14 @@ for(first in 1:length(QUAC_wildpop_names)){
   }
 }
 
-##replacce NAs with zeroes 
+#replacce NAs with zeroes 
 QUAC_dist[is.na(QUAC_dist)] <- 0
 QUAC_fst_df[is.na(QUAC_fst_df)] <- 0
 
-##create a linear regression
+#create a linear regression
 QUAC_fst_dist <- lm(QUAC_fst_df[lower.tri(QUAC_fst_df)]~QUAC_dist[lower.tri(QUAC_dist)])
 
-##visualize the isolation by distance relationship with p-value
+#visualize the isolation by distance relationship with p-value
 pdf("../QUAC_analyses/Results/Clustering/QUAC_Dist_Fst.pdf")
 plot(QUAC_fst_df[lower.tri(QUAC_fst_df)]~QUAC_dist[lower.tri(QUAC_dist)], pch = 17, ylim = c(0,0.13), 
      xlim = c(0,200),

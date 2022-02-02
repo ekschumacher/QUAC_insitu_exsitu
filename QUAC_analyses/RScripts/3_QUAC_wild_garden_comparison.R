@@ -1,105 +1,112 @@
-##############This script details the analysis of actually comparing genetic diversity levels between garden 
-#############and wild Q. acerifolia populations. We first calculated diversity levels throughout all garden  
-############and wild populations (indicated by allelic richness and expected heterozygosity) and then ran a t-test 
-###########between the values. The resulting figures can be found in the main text 
+##This script details the analysis of actually comparing genetic 
+#diversity levels between garden and wild Q. acerifolia populations. 
+#We first calculated diversity levels throughout all garden  
+#and wild populations (indicated by allelic richness and 
+#expected heterozygosity) and then ran a t-test to assess significance. 
+#In this script we use "cleaned" genetic files because they have been
+#cleaned for clones and individuals with too much misisng data 
+#(25% or more)
 
-##########################
-######## Libraries #######
-##########################
+#####################
+#     Libraries     #
+#####################
 
 library(adegenet)
 library(diveRsity)
 library(poppr)
 library(hierfstat)
 
-################################
-########## Load files ##########
-################################
+#######################
+#     Load files      #
+#######################
 setwd("../../QUAC_data_files")
 
 ##convert to a genepop file, if necessary
 #arp2gen(paste0(QUAC_data_files, "/QUAC_genind/QUAC_garden_wild_clean.arp"))
 
-##load in genepop file as a genind object 
+#load in genepop file as a genind object 
 QUAC_garden_wild_gen <- read.genepop("QUAC_adegenet_files/Garden_Wild/QUAC_garden_wild_clean.gen", ncode = 3)
 
-##load in data frame 
-QUAC_garden_wild_df <- read.csv("QUAC_data_frames/Garden_Wild/QUAC_garden_wild_clean_df.csv")
+#load in data frame 
+QUAC_garden_wild_df <- read.csv("QUAC_data_frames/Garden_Wild/QUAC_clean_df.csv")[,-1]
 
-##rename individuals in genind object
-rownames(QUAC_garden_wild_gen@tab) <- QUAC_garden_wild_df$ID
+#rename individuals in genind object
+rownames(QUAC_garden_wild_gen@tab) <- QUAC_garden_wild_df$Ind
 
 ##rename population names in the genind object
 #create pop name list
-QUAC_popnames <- unique(QUAC_garden_wild_df$POP)
+QUAC_popnames <- unique(QUAC_garden_wild_df$Pop)
 #rename populations in the genind object
 levels(QUAC_garden_wild_gen@pop) <- QUAC_popnames
 
-
-##load in function to calculate allele frequency categories
+#load in function to calculate allele frequency categories
 source("../QUAC_analyses/RScripts/Fa_sample_funcs.R")
 
-##create functions to run code 
+#create functions to run code 
 colMax <- function(data) sapply(data, max, na.rm = TRUE)
 
-############################################################
-############ Comparing wild and garden populations #########
-############################################################
+#################################################
+#     Comparing wild and garden populations     #
+#################################################
+#set working directory 
 setwd("../QUAC_analyses/Results/Wild_Garden_Comparison")
-##calculate genetic diversity statistics 
-QUAC_wild_hexp <- summary(seppop(QUAC_garden_wild_gen)$Wild)[7]
-QUAC_garden_hexp <- summary(seppop(QUAC_garden_wild_gen)$Garden)[7]
 
-##calculate allelic richness
-QUAC_wild_allrich <- allelic.richness(seppop(QUAC_garden_wild_gen)$Wild)$Ar
-QUAC_garden_allrich <- allelic.richness(seppop(QUAC_garden_wild_gen)$Garden)$Ar
+#allrich list 
+QUAC_allrich <- list()
+QUAC_hexp <- list()
 
-##create gendiv data frame 
-QUAC_gendiv_df <- matrix(nrow = 30, ncol = 3)
-QUAC_gendiv_df[1:15,1] <- c("Garden")
-QUAC_gendiv_df[16:30,1] <- c("Wild")
-##load in heterozygosity
-QUAC_gendiv_df[1:15,2] <- QUAC_garden_hexp$Hexp
-QUAC_gendiv_df[16:30,2] <- QUAC_wild_hexp$Hexp
-##load in allelic richness 
-QUAC_gendiv_df[1:15,3] <- QUAC_wild_allrich[,1]
-QUAC_gendiv_df[16:30,3] <- QUAC_garden_allrich[,1]
+#genetic diversity data frame 
+QUAC_gendiv_df <- matrix(nrow = 3, ncol = 2)
 
-#####test for normality and homogeneity of variance --hexp
-##test homogeneity of variances 
-var.test(as.numeric(QUAC_gendiv_df[,2])~as.factor(QUAC_gendiv_df[,1]))
-##normality test
-shapiro.test(as.numeric(QUAC_gendiv_df[,2]))
-##run t-test 
-hexp_krusk <- kruskal.test(as.numeric(QUAC_gendiv_df[,2])~as.factor(QUAC_gendiv_df[,1]))
+##name rows and columns 
+rownames(QUAC_gendiv_df) <- c("Mean_Garden", "Mean_Wild", "p-value")
+colnames(QUAC_gendiv_df) <- c("All_Rich","Hexp")
 
-#####t-test for allelic richness 
-##test for homogeneity of variance
-var.test(as.numeric(QUAC_gendiv_df[,3])~as.factor(QUAC_gendiv_df[,1]))
-##test for normal data 
-shapiro.test(as.numeric(QUAC_gendiv_df[,3]))
-##do kruskal-wallis
-##run t-test 
-allrich_krusk <- kruskal.test(as.numeric(QUAC_gendiv_df[,3])~as.factor(QUAC_gendiv_df[,1]))
+#loop over both garden and wild individuals to calculate the differences in allelic richness and hexp
+for(pop_type in 1:length(pop_type_list)){
+  
+  #create data frame of the pop type - garden or wild 
+  QUAC_df <- QUAC_garden_wild_df[QUAC_garden_wild_df$Garden_Wild == paste0(pop_type_list[[pop_type]]),]
+  
+  #then subset genind by pop type - garden of wild 
+  QUAC_gen <- QUAC_garden_wild_gen[rownames(QUAC_garden_wild_gen@tab) %in% QUAC_df$Ind,]
+  
+  ####Allelic richness calculations 
+  QUAC_allrich[[pop_type]] <- allelic.richness(QUAC_gen)$Ar
+  
+  if(pop_type == 1){
+    QUAC_allrich[[1]]$pop_type <- "Garden"
+  }else{
+    QUAC_allrich[[2]]$pop_type <- "Wild"
+  }
+  #combine to form an allelic richness data frame 
+  QUAC_allrich_df <- rbind(QUAC_allrich[[1]][,c(1,3)], QUAC_allrich[[2]][,c(1,3)])
+  #add allelic richness results to the data frame 
+  QUAC_gendiv_df[pop_type,1] <- mean(QUAC_allrich_df[QUAC_allrich_df[,2] == paste0(pop_type_list[[pop_type]]),][,1])
+  QUAC_gendiv_df[3,1] <- kruskal.test(QUAC_allrich_df[,1]~QUAC_allrich_df[,2])[3]$p.value
 
-##results data frame 
-QUAC_garden_wild_results <- matrix(nrow = 2, ncol = 3)
-##name columns and rows 
-rownames(QUAC_garden_wild_results) <- c("Expected Heterozygosity", "Allelic Richness")
-colnames(QUAC_garden_wild_results) <- c("Garden Mean", "Wild Mean", "P-Value")
+  ###Expected heterozygosity 
+  QUAC_hexp[[pop_type]] <- data.frame(summary(QUAC_gen)[7]$Hexp)
+  
+  #name the pops 
+  if(pop_type == 1){
+    QUAC_hexp[[1]]$pop_type <- "Garden"
+  }else{
+    QUAC_hexp[[2]]$pop_type <- "Wild"
+  }
+  #combine all of the heterozygosity calculations 
+  QUAC_hexp_df <- rbind(QUAC_hexp[[1]][,c(1:2)], QUAC_hexp[[2]][,c(1:2)])
+  #add allelic richness results to the data frame 
+  QUAC_gendiv_df[pop_type,2] <- mean(QUAC_hexp_df[QUAC_hexp_df[,2] == paste0(pop_type_list[[pop_type]]),][,1])
+  QUAC_gendiv_df[3,2] <- kruskal.test(QUAC_hexp_df[,1]~QUAC_hexp_df[,2])[3]$p.value
+  
+  #write out a csv 
+  write.csv(QUAC_gendiv_df, "QUAC_gendiv_df.csv")
+}
 
-##add values 
-QUAC_garden_wild_results[1,3] <- hexp_krusk[3]$p.value
-QUAC_garden_wild_results[2,3] <- allrich_krusk[3]$p.value
-QUAC_garden_wild_results[1,1] <- mean(QUAC_garden_hexp$Hexp) ; QUAC_garden_wild_results[1,2] <- mean(QUAC_wild_hexp$Hexp)
-QUAC_garden_wild_results[2,1] <- mean(QUAC_garden_allrich[,1]) ; QUAC_garden_wild_results[2,2] <- mean(QUAC_wild_allrich[,1])
-
-##write out table 
-write.csv(QUAC_garden_wild_results, "QUAC_garden_wild_gendiv_dif_df.csv")
-
-####################################
-#### Allelic capture code ##########
-####################################
+#################################
+#     Allelic capture code      #
+#################################
 ##list out allele categories
 list_allele_cat<-c("global","glob_v_com","glob_com","glob_lowfr","glob_rare","reg_rare","loc_com_d1","loc_com_d2","loc_rare")
 

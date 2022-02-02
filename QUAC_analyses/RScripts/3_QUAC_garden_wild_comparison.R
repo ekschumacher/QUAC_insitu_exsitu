@@ -34,10 +34,8 @@ QUAC_garden_wild_df <- read.csv("QUAC_data_frames/Garden_Wild/QUAC_clean_df.csv"
 rownames(QUAC_garden_wild_gen@tab) <- QUAC_garden_wild_df$Ind
 
 ##rename population names in the genind object
-#create pop name list
-QUAC_popnames <- unique(QUAC_garden_wild_df$Pop)
-#rename populations in the genind object
-levels(QUAC_garden_wild_gen@pop) <- QUAC_popnames
+QUAC_pop_names <- c("Garden", "Wild")
+levels(QUAC_garden_wild_gen@pop) <- QUAC_pop_names
 
 #load in function to calculate allele frequency categories
 source("../QUAC_analyses/RScripts/Fa_sample_funcs.R")
@@ -52,6 +50,7 @@ colMax <- function(data) sapply(data, max, na.rm = TRUE)
 setwd("../QUAC_analyses/Results/Wild_Garden_Comparison")
 
 #allrich list 
+pop_type_list <- c("Garden", "Wild")
 QUAC_allrich <- list()
 QUAC_hexp <- list()
 
@@ -79,11 +78,7 @@ for(pop_type in 1:length(pop_type_list)){
   }else{
     QUAC_allrich[[2]]$pop_type <- "Wild"
   }
-  #combine to form an allelic richness data frame 
-  QUAC_allrich_df <- rbind(QUAC_allrich[[1]][,c(1,3)], QUAC_allrich[[2]][,c(1,3)])
-  #add allelic richness results to the data frame 
-  QUAC_gendiv_df[pop_type,1] <- mean(QUAC_allrich_df[QUAC_allrich_df[,2] == paste0(pop_type_list[[pop_type]]),][,1])
-  QUAC_gendiv_df[3,1] <- kruskal.test(QUAC_allrich_df[,1]~QUAC_allrich_df[,2])[3]$p.value
+  
 
   ###Expected heterozygosity 
   QUAC_hexp[[pop_type]] <- data.frame(summary(QUAC_gen)[7]$Hexp)
@@ -94,26 +89,35 @@ for(pop_type in 1:length(pop_type_list)){
   }else{
     QUAC_hexp[[2]]$pop_type <- "Wild"
   }
-  #combine all of the heterozygosity calculations 
-  QUAC_hexp_df <- rbind(QUAC_hexp[[1]][,c(1:2)], QUAC_hexp[[2]][,c(1:2)])
-  #add allelic richness results to the data frame 
-  QUAC_gendiv_df[pop_type,2] <- mean(QUAC_hexp_df[QUAC_hexp_df[,2] == paste0(pop_type_list[[pop_type]]),][,1])
-  QUAC_gendiv_df[3,2] <- kruskal.test(QUAC_hexp_df[,1]~QUAC_hexp_df[,2])[3]$p.value
   
-  #write out a csv 
-  write.csv(QUAC_gendiv_df, "QUAC_gendiv_df.csv")
 }
+
+#combine to form an allelic richness data frame 
+QUAC_allrich_df <- rbind(QUAC_allrich[[1]][,c(1,3)], QUAC_allrich[[2]][,c(1,3)])
+#add allelic richness results to the data frame 
+for(pop_type in 1:length(pop_type_list)) QUAC_gendiv_df[pop_type,1] <- mean(QUAC_allrich_df[QUAC_allrich_df[,2] == paste0(pop_type_list[[pop_type]]),][,1])
+QUAC_gendiv_df[3,1] <- kruskal.test(QUAC_allrich_df[,1]~QUAC_allrich_df[,2])[3]$p.value
+
+#combine all of the heterozygosity calculations 
+QUAC_hexp_df <- rbind(QUAC_hexp[[1]][,c(1:2)], QUAC_hexp[[2]][,c(1:2)])
+#add allelic richness results to the data frame 
+for(pop_type in 1:length(pop_type_list)) QUAC_gendiv_df[pop_type,2] <- mean(QUAC_hexp_df[QUAC_hexp_df[,2] == paste0(pop_type_list[[pop_type]]),][,1])
+
+QUAC_gendiv_df[3,2] <- kruskal.test(QUAC_hexp_df[,1]~QUAC_hexp_df[,2])[3]$p.value
+
+#write out a csv 
+write.csv(QUAC_gendiv_df, "QUAC_gendiv_df.csv")
 
 #################################
 #     Allelic capture code      #
 #################################
-##list out allele categories
+#list out allele categories
 list_allele_cat<-c("global","glob_v_com","glob_com","glob_lowfr","glob_rare","reg_rare","loc_com_d1","loc_com_d2","loc_rare")
 
-##seppop genind - we only want to use the wild pops to calculate the alleles existing for capture
+#seppop genind - we only want to use the wild pops to calculate the alleles existing for capture
 QUAC_seppop <- seppop(QUAC_garden_wild_gen)
 
-##calculate number of individuals per pop
+#calculate number of individuals per pop
 n_ind_p_pop <- as.numeric(table(QUAC_seppop[[2]]@pop))
 
 ##convert the wild genind object to a genpop object
@@ -123,17 +127,17 @@ QUAC_wild_genpop <- genind2genpop(QUAC_seppop[[2]])
 n_ind_W<-table(QUAC_garden_wild_gen@pop)[2];  n_ind_G<-table(QUAC_garden_wild_gen@pop)[1]; 
 QUAC_alleles_cap <- colSums(QUAC_seppop[[1]]@tab,na.rm=T)
 
-#######create table for % alleles captured by frequency and how many duplicates were present  
+##create table for % alleles captured by frequency and how many duplicates were present  
 #create list with duplicates 
 dup_reps <- c(0:9)
 
-##create a table to store % alleles captured by gardens pops where no alleles are dropped 
+#create a table to store % alleles captured by gardens pops where no alleles are dropped 
 QUAC_allele_cap_table_ndrop0 <- matrix(nrow = length(dup_reps), ncol = length(list_allele_cat))
 
-##create a table to store % alleles captured by garden pops where alleles are dropped if there are fewer than 2
+#create a table to store % alleles captured by garden pops where alleles are dropped if there are fewer than 2
 QUAC_allele_cap_table_ndrop2 <- matrix(nrow = length(dup_reps), ncol = length(list_allele_cat))
 
-######create arrays and lists to store results 
+#create arrays and lists to store results 
 QUAC_allele_cat <- list()
 #create allele existing df
 QUAC_all_exist_df <- matrix(nrow = (length(dup_reps)), ncol = length(list_allele_cat))
@@ -179,9 +183,9 @@ for(ndrop in c(0,2)){
   colnames(QUAC_allele_cap) <- list_allele_cat
 
   ##write out data frames
-  write.csv(QUAC_all_exist_df, paste0("C:/Users/eschumacher/Documents/GitHub/QUAC_insitu_exsitu/QUAC_analyses/Results/Wild_Garden_Comparison/QUAC_all_exist_df", n_drop_file, ".csv"))
-  write.csv(QUAC_wild_cap_df, paste0("C:/Users/eschumacher/Documents/GitHub/QUAC_insitu_exsitu/QUAC_analyses/Results/Wild_Garden_Comparison/QUAC_wild_cap_df", n_drop_file, ".csv"))
-  write.csv(QUAC_allele_cap, paste0("C:/Users/eschumacher/Documents/GitHub/QUAC_insitu_exsitu/QUAC_analyses/Results/Wild_Garden_Comparison/QUAC_all_cap_garden_df", n_drop_file, ".csv"))
+  write.csv(QUAC_all_exist_df, paste0("QUAC_all_exist_df", n_drop_file, ".csv"))
+  write.csv(QUAC_wild_cap_df, paste0("QUAC_wild_cap_df", n_drop_file, ".csv"))
+  write.csv(QUAC_allele_cap, paste0("QUAC_all_cap_garden_df", n_drop_file, ".csv"))
 }
 
 ###write session info out

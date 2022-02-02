@@ -1,7 +1,10 @@
-##This script calculates the Fst between wild Q. acerifolia populations and compares it to the 
-#distance between populations 
-#First we calculate the Fst between wild Q. acerifolia populations and then run 
-#a linear regression between distance between populations and then run a Mantel test
+##This script calculates the Fst between wild Q. acerifolia 
+#compares genetic differentiation with distance
+#First we calculate the Fst between wild Q. acerifolia populations 
+#and then regress it with the distance between populations. 
+#We use "cleaned" data files here, which means genetic 
+#data files have been cleaned for clones and individuals with 
+#too much missing data (25% missing data)
 
 #########################
 #        Libraries      #
@@ -17,27 +20,28 @@ library(geosphere)
 #set working directory
 setwd("../../QUAC_data_files")
 
-##load in genepop files as genind objects
+#load in genepop files as genind objects
 QUAC_wild_gen <- read.genepop("QUAC_adegenet_files/Garden_Wild/QUAC_wild_allpop_clean.gen", ncode = 3)
-##load in data frame with summary stats
-QUAC_sumstat_df <- read.csv("../QUAC_analyses/Results/Sum_Stats/QUAC_wild_gendiv_sumstat_df.csv")
 
-###create population name list
+#load in data frame with summary stats
+QUAC_sumstat_df <- read.csv("../QUAC_analyses/Results/Sum_Stats/Wild_gendiv_sumstat_df.csv")
+
+#create population name list
 QUAC_wildpop_names <- QUAC_sumstat_df[,1]
 
-##name populations in genind object
+#name populations in genind object
 levels(QUAC_wild_gen@pop) <- QUAC_wildpop_names
 
-#################################
-###### Fst Calculations #########
-#################################
-##create data frame for just coordinates of each population
+#############################
+#     Fst Calculations      #
+#############################
+#create data frame for just coordinates of each population
 QUAC_coords <- QUAC_sumstat_df[,c(2:3)]
 
-##name every pop
+#name every pop
 rownames(QUAC_coords) <- QUAC_wildpop_names
 
-##convert to hierfstat format object 
+#convert to hierfstat format object 
 QUAC_hierfstat <- genind2hierfstat(QUAC_wild_gen)
 
 ##run pairwise fst code 
@@ -60,7 +64,7 @@ QUAC_fst_df[is.na(QUAC_fst_df)] <- 0
 QUAC_fst_dist <- lm(QUAC_fst_df[lower.tri(QUAC_fst_df)]~QUAC_dist[lower.tri(QUAC_dist)])
 
 ##visualize the isolation by distance relationship with p-value
-pdf(paste0(QUAC_analysis_results, "/Clustering/QUAC_Dist_Fst.pdf"))
+pdf("../QUAC_analyses/Results/Clustering/QUAC_Dist_Fst.pdf")
 plot(QUAC_fst_df[lower.tri(QUAC_fst_df)]~QUAC_dist[lower.tri(QUAC_dist)], pch = 17, ylim = c(0,0.13), 
      xlim = c(0,200),
      xlab = c("Distance (km)"), ylab = c("Fst"))

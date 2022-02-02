@@ -1,6 +1,6 @@
-"","Allelic Richness","Expected Heterozygosity"
-"QUAC_garden_clean_EST_df",10.5,0.586
-"QUAC_garden_clean_non_EST_df",13.9,0.67
-"QUAC_wild_EST_df",8.5,0.547
-"QUAC_wild_non_est_clean_df",10.8,0.696
-"p-value",0.327,0.779
+"","All_Rich","Hexp"
+"Garden_EST",10.5,0.586
+"Garden_nonEST",13.9,0.67
+"Wild_EST",8.5,0.547
+"Wild_nonEST",10.8,0.696
+"p_value",0.327,0.779

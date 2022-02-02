@@ -1,7 +1,7 @@
 ##This script details the analyses run on Quercus acerifolia (referred to as 
 #QUAC for brevity here) genotype files to prepare them for genetic diversity and 
-#structure analyses. When files are refered to as "clean" that means individuals 
-#that are clones and indviduals with too much missing data have been removed. 
+#structure analyses. When files are referred to as "clean" that means individuals 
+#that are clones and individuals with too much missing data have been removed. 
 #When files and objects are titled "red" that means they have been reduced
 #for relatedness (25% or more related individuals are reduced to one individual
 #per phenotype)
@@ -32,10 +32,6 @@ QUAC_df <- read.csv("QUAC_data_frames/QUAC_allpop.csv")
 
 ##rename individuals in the genind object 
 rownames(QUAC_gen@tab) <- QUAC_df[,1]
-
-##create population name list and rename the populations in the genind object 
-QUAC_popnames <- unique(QUAC_df$Pop)
-levels(QUAC_gen@pop) <- QUAC_popnames
 
 ############################################################
 #    Remove Clones and Individuals with Missing Data       #
@@ -99,16 +95,17 @@ for(pop_type in 1:length(pop_type_list)){
   QUAC_ind_red_list <- unique(QUAC_halfsib_names_cleanback)
   
   ##reduce data frame for related individuals 
-  QUAC_rel_df <- QUAC_df[!QUAC_df[,1] %in% QUAC_ind_red_list[[pop_type]],]
+  QUAC_rel_df <- QUAC_df[!QUAC_df[,1] %in% QUAC_ind_red_list,]
   
   ##write csv of the reduced data frame 
-  #write.csv(QUAC_rel_df, paste0("QUAC_data_frames/Relate_Red/QUAC_", pop_type_list[[pop_type]], "_rel_df.csv"))
+  write.csv(QUAC_rel_df, paste0("QUAC_data_frames/Relate_Red/QUAC_", pop_type_list[[pop_type]], "_rel_df.csv"))
   
   ##now limit genind object by relatedness 
-  QUAC_rel_gen <- QUAC_gen[!rownames(QUAC_gen@tab) %in% QUAC_ind_red_list[[pop_type]],]
+  QUAC_rel_gen <- QUAC_gen[!rownames(QUAC_gen@tab) %in% QUAC_ind_red_list,]
   
   ##write out genalex file
-#  genind2genalex(QUAC_rel_gen, paste0("QUAC_data_frames/Relate_Red/QUAC_", pop_type_list[[pop_type]], 
- #                                    "_rel_genalex.csv"), overwrite = TRUE)
+  genind2genalex(QUAC_rel_gen, paste0("QUAC_data_frames/Relate_Red/QUAC_", pop_type_list[[pop_type]], 
+                                     "_rel_genalex.csv"), overwrite = TRUE)
   
 }
+

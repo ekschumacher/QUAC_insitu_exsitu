@@ -1,7 +1,8 @@
 ###These are the next steps in calculating genetic diversity 
-##First, we tested linkage disequilibrium, null alleles, and Hardy Weinberg equilibrium.
-#Next, a data frame including expected heterozygosity, allelic richness, number of alleles, 
-#mean longtitude and latitude by population, and individual numbers. 
+##First, we tested linkage disequilibrium, null alleles, and Hardy Weinberg 
+#equilibrium. Next, a data frame including expected heterozygosity, 
+#allelic richness, number of alleles, mean longtitude and latitude 
+#for wild populations, and individual numbers. 
 #This table is included in full in the supplemental text of this manuscript.
 
 #########################
@@ -44,13 +45,13 @@ QUAC_wild_lonlat_allpop_clean_df <- read.csv("QUAC_data_frames/Garden_Wild/QUAC_
 #  Null Alleles, HWE Deviation, Linkage Disequilibrium     #
 ############################################################
 ####calculate null alleles 
-QUAC_nullall_pop <- lapply(QUAC_allpop_gen, null.all)
+QUAC_nullall_pop <- null.all(QUAC_clean_gen)
 #create null allele table
 QUAC_null_all_df <- signif(data.frame(QUAC_nullall_pop$null.allele.freq$summary2),3)
 
 ####calculate HWE deviations
 ##bn HWE test
-QUAC_hwe_pop <- seppop(QUAC_allpop_gen) %>% lapply(hw.test, B = 1000)
+QUAC_hwe_pop <- seppop(QUAC_clean_gen) %>% lapply(hw.test, B = 1000)
 ##create table by populations
 QUAC_HWE_allpop_df <- sapply(QUAC_hwe_pop, "[", i = TRUE, j = 3)
 ##name columns

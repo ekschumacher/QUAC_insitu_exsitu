@@ -8,6 +8,7 @@
 #####################
 #     Libraries     #
 #####################
+
 library(adegenet)
 
 #######################
@@ -99,7 +100,7 @@ all_mean_list[[2]] <- as.data.frame(apply(summ_results_tree_ndrop2[,,1:num_reps]
 for(ndrop in 1:length(all_mean_list)){
   
   #write PDF with name
-  pdf(paste0("../QUAC_analyses/Results/Wild_Garden_Comparison/all_resampling_ndrop", n_drop[[ndrop]],".pdf"))
+  pdf(paste0("../QUAC_analyses/Results/Wild_Garden_Comparison/QUAC_all_resampling_ndrop", n_drop[[ndrop]],".pdf"))
   #add points
   plot(all_mean_list[[ndrop]][,1], col = "red", pch = 20, xlab = "Number of Individuals", 
        ylab = "Percent Diversity Capture", xlim = c(0,171), ylim = c(0,100), cex = 1.2,

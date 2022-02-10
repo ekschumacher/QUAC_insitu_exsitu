@@ -84,3 +84,36 @@ The two main folders of this project are QUAC_data_files and QUAC_analyses. QUAC
 <ul><ul><ul><li>QUAC_wildonly_str_READY.txt</li></ul></ul></ul>
 
 <b>QUAC_analyses</b>: This folder contains all the RScripts used to run analyses on QUAC data files. The Results folder is separated into Clustering analyses (like PCA and STRUCTURE) and Sum_Stats contains all of the overall statistics calculated by wild populations and garden separately. Finally, the Wild_Garden_Comparison folder contains all of the results generated when comparing diversity differences between garden and wild populations. 
+
+<ul><li>Results</li></ul>
+<ul><ul><li>Description: This folder contains the results of the analyses performed in the RScripts folder.</li></ul></ul>
+
+<ul><ul><ul><li>Clustering: This folder contains the results of clustering analyses; broadly including PCA results, structure results, and distance/fst linear relationships, and the results of Geneclass assignment testing.</li></ul></ul></ul>
+<ul><ul><ul><ul><li></li>QUAC_Dist_Fst.jpg</ul></ul></ul></ul>
+<ul><ul><ul><ul><li></li>QUAC_Dist_Fst.pdf</ul></ul></ul></ul>
+<ul><ul><ul><ul><li></li>QUAC_geneclass.csv</ul></ul></ul></ul>
+<ul><ul><ul><ul><li></li>QUAC_geneclass_relate_red.csv</ul></ul></ul></ul>
+<ul><ul><ul><ul><li></li>QUAC_PCA_garden_allwildpops.pdf</ul></ul></ul></ul>
+<ul><ul><ul><ul><li></li>QUAC_PCA_garden_wild.pdf</ul></ul></ul></ul>
+<ul><ul><ul><ul><li></li>QUAC_PCA_wild.pdf</ul></ul></ul></ul>
+
+<ul><ul><ul><li>Sum_Stats: This folder contains the general results of genetic summary stats analyses - calculating  allelic richness and heterozygosity and multilocus genotype within all botanic gardens and wild populations.</li></ul></ul></ul>
+<ul><ul><ul><ul><li></li>Garden_gendiv_sumstat_df.csv</ul></ul></ul></ul>
+<ul><ul><ul><ul><li></li>HWE_df.csv</ul></ul></ul></ul>
+<ul><ul><ul><ul><li></li>LD_df.csv</ul></ul></ul></ul>
+<ul><ul><ul><ul><li></li>Null_All_df.csv</ul></ul></ul></ul>
+<ul><ul><ul><ul><li></li>Wild_gendiv_sumstat_df.csv</ul></ul></ul></ul>
+
+<ul><ul><ul><li>Wild_Garden_Comparison: This folder contains the results of comparisons between population types - botanic garden individuals as a whole group and wild individuals as a group. The significance comparison is stored here between genetic diversity metrics and the comparisons between EST and genomic microsatellites, but also percent alleles captured and calculations of minimum sample sizes to capture diversity are stored in here. There are 2 types of files in several cases - ndrop0 and ndrop2. Alleles with 2 or fewer frequencies are sometimes dropped (ndrop2) because they may be genotyping mistakes or very rare alleles. Therefore, we performed analyses both with and without these alleles to determine how results differed with and without these alleles. </li></ul></ul></ul>
+<ul><ul><ul><ul><li></li>QUAC_all_cap_garden_df.csv</ul></ul></ul></ul>
+<ul><ul><ul><ul><li></li>QUAC_all_cap_garden_df_dr_0.csv</ul></ul></ul></ul>
+<ul><ul><ul><ul><li></li>QUAC_all_exist_df.csv</ul></ul></ul></ul>
+<ul><ul><ul><ul><li></li>QUAC_all_exist_df_dr_0.csv</ul></ul></ul></ul>
+<ul><ul><ul><ul><li></li>QUAC_all_resampling_ndrop0.pdf</ul></ul></ul></ul>
+<ul><ul><ul><ul><li></li>QUAC_all_resampling_ndrop2.pdf</ul></ul></ul></ul>
+<ul><ul><ul><ul><li></li>QUAC_EST_boxplots.pdf</ul></ul></ul></ul>
+<ul><ul><ul><ul><li></li>QUAC_EST_mean_df.csv</ul></ul></ul></ul>
+<ul><ul><ul><ul><li></li>QUAC_gendiv_df.csv</ul></ul></ul></ul>
+<ul><ul><ul><ul><li></li>QUAC_min_samp_95.csv</ul></ul></ul></ul>
+<ul><ul><ul><ul><li></li>QUAC_wild_cap_df.csv</ul></ul></ul></ul>
+<ul><ul><ul><ul><li></li>QUAC_wild_cap_df_dr_0.csv</ul></ul></ul></ul>

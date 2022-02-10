@@ -66,4 +66,21 @@ The two main folders of this project are QUAC_data_files and QUAC_analyses. QUAC
 <ul><ul><ul><li>QUAC_wild_relate_red_df.csv</li></ul></ul></ul>
 <ul><ul><ul><li>QUAC_wild_relate_red_genalex.csv</li></ul></ul></ul>
 
+<ul><li>QUAC_geneclass</li></ul>
+<ul><ul><li>Description: This folder contains all data frames created for assignment testing in Geneclass. Input files are in a Genepop format and were generated before and after reduction for relatedness (individuals related by 25% or more were removed to created "relate_red" data files). CSV refers to a comma separated value file.</li></ul></ul>
+<ul><ul><ul><li>QUAC_garden_input.genepop</li></ul></ul></ul>
+<ul><ul><ul><li>QUAC_garden_relate_red_input.genepop</li></ul></ul></ul>
+<ul><ul><ul><li>QUAC_geneclass_output.csv</li></ul></ul></ul>
+<ul><ul><ul><li>QUAC_geneclass_relate_red_output.csv</li></ul></ul></ul>
+<ul><ul><ul><li>QUAC_wild_relate_red_input.genepop</li></ul></ul></ul>
+<ul><ul><ul><li>QUAC_wildpops_woKessler.genepop</li></ul></ul></ul>
+
+
+<ul><li>QUAC_strucure</li></ul>
+<ul><ul><li>Description: This folder contains text files generated from relatedness reduced Genalex files used to generate structure diagrams and so were exported from Genalex in structure format. Only "READY" files were used in structure analyses, either "str" only document were used as conversion files. </li></ul></ul>
+<ul><ul><ul><li>QUAC_str.txt</li></ul></ul></ul>
+<ul><ul><ul><li>QUAC_str_READY.txt</li></ul></ul></ul>
+<ul><ul><ul><li>QUAC_wildonly_str.txt</li></ul></ul></ul>
+<ul><ul><ul><li>QUAC_wildonly_str_READY.txt</li></ul></ul></ul>
+
 <b>QUAC_analyses</b>: This folder contains all the RScripts used to run analyses on QUAC data files. The Results folder is separated into Clustering analyses (like PCA and STRUCTURE) and Sum_Stats contains all of the overall statistics calculated by wild populations and garden separately. Finally, the Wild_Garden_Comparison folder contains all of the results generated when comparing diversity differences between garden and wild populations. 

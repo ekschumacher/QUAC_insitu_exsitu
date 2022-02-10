@@ -31,7 +31,7 @@ setwd("../../QUAC_data_files")
 #QUAC_clean_gen <- arp2gen("QUAC_adegenet_files/Garden_Wild/QUAC_clean_gen.arp")
 
 ##load in QUAC all pop genepop as a genind object
-QUAC_clean_gen <- read.genepop("QUAC_adegenet_files/Garden_Wild/QUAC_clean.gen", ncode = 3)
+QUAC_clean_gen <- read.genepop("QUAC_adegenet_files/QUAC_allpop_clean.gen", ncode = 3)
 
 #load all pop data frames
 QUAC_allpop_df <- read.csv("QUAC_data_frames/Garden_Wild/QUAC_clean_df.csv")[,-1]
@@ -60,7 +60,7 @@ QUAC_hwe_pop <- seppop(QUAC_clean_gen) %>% lapply(hw.test, B = 1000)
 #create table by populations
 QUAC_HWE_allpop_df <- sapply(QUAC_hwe_pop, "[", i = TRUE, j = 3)
 #name columns
-colnames(QUAC_HWE_allpop_df) <- QUAC_popnames
+colnames(QUAC_HWE_allpop_df) <- QUAC_pop_names
 #round to the 3rd digit
 QUAC_HWE_allpop_df <- signif(QUAC_HWE_allpop_df, 3)
 
@@ -71,7 +71,7 @@ QUAC_ld_df <- data.frame(round(QUAC_ld,digits = 2))
 ##write out null allele document 
 write.csv(QUAC_null_all_df, "../QUAC_analyses/Results/Sum_Stats/QUAC_null_all_df.csv")
 write.csv(QUAC_HWE_allpop_df, "../QUAC_analyses/Results/Sum_Stats/QUAC_HWE_df.csv")
-write.csv(QUAC_ld_df, "../QUAC_analyses/Results/Sum_Stats/QUAC_ld_df.csv")
+write.csv(QUAC_ld_df, "../QUAC_analyses/Results/Sum_Stats/QUAC_LD_df.csv")
 
 ###########################################
 #          Genetic Stats by Pop           #
@@ -154,6 +154,6 @@ for(pop_type in 1:length(pop_type_list)){
      }
   
   ##write out csv 
- write.csv(QUAC_allpop_gendiv_sumstat_df, paste0("../QUAC_analyses/Results/Sum_Stats/", pop_type_list[[pop_type]], "_gendiv_sumstat_df.csv"))
+ write.csv(QUAC_allpop_gendiv_sumstat_df, paste0("../QUAC_analyses/Results/Sum_Stats/QUAC_", pop_type_list[[pop_type]], "_gendiv_sumstat_df.csv"))
   
 }

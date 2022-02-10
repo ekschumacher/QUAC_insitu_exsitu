@@ -73,8 +73,8 @@ for(pops in 1:length(QUAC_PCA_gen)){
   pdf(paste0(QUAC_clustering_results, gsub("\\..*","",QUAC_PCA_gen[[pops]]), "_PCA.pdf"),width = 10, height = 8)
   
   print(ggplot(QUAC_PCA_df_temp, aes(as.numeric(Axis1), as.numeric(Axis2), col = Pop)) + geom_point() + 
-          scale_x_continuous(limits = c(-3,3)) + 
-          scale_y_continuous(limits = c(-3,3)) + 
+          scale_x_continuous(limits = c(-2,2)) + 
+          scale_y_continuous(limits = c(-2.5,2)) + 
           xlab(paste0("PC1 (", QUAC_pc1, "%)")) +
           ylab(paste0("PC2 (", QUAC_pc2, "%)")) + 
           theme_bw() + stat_ellipse() + 

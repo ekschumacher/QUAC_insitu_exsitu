@@ -117,3 +117,15 @@ The two main folders of this project are QUAC_data_files and QUAC_analyses. QUAC
 <ul><ul><ul><ul><li>QUAC_min_samp_95.csv</li></ul></ul></ul></ul>
 <ul><ul><ul><ul><li>QUAC_wild_cap_df.csv</li></ul></ul></ul></ul>
 <ul><ul><ul><ul><li>QUAC_wild_cap_df_dr_0.csv</li></ul></ul></ul></ul>
+
+<ul><li>RScript</li></ul>
+<ul><ul><li>Description: This folder contains all of the RScripts to perform genetic analyses in this manuscript. Scripts are numbered in order of when the results are reported in the manuscript. The "Fa_sample_funcs" contains a function that calculates the allele frequency categories.</li></ul></ul> 
+<ul><ul><ul><ul><li>1_QUAC_clonecheck_missingdata_relatedness.R</li></ul></ul></ul></ul>
+<ul><ul><ul><ul><li>2_QUAC_gendiv_sumstats.R</li></ul></ul></ul></ul>
+<ul><ul><ul><ul><li>3_QUAC_garden_wild_comparison.R</li></ul></ul></ul></ul>
+<ul><ul><ul><ul><li>4_QUAC_EST_diversity_comparison.R</li></ul></ul></ul></ul>
+<ul><ul><ul><ul><li>5_QUAC_allelic_resampling.R</li></ul></ul></ul></ul>
+<ul><ul><ul><ul><li>6_QUAC_PCA.R</li></ul></ul></ul></ul>
+<ul><ul><ul><ul><li>7_QUAC_IBD.R</li></ul></ul></ul></ul>
+<ul><ul><ul><ul><li>8_QUAC_geneclass_sum_stats.R</li></ul></ul></ul></ul>
+<ul><ul><ul><ul><li>Fa_sample_funcs.R</li></ul></ul></ul></ul>

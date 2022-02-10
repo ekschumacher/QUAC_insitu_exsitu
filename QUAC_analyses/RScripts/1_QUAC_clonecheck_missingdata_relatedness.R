@@ -98,14 +98,14 @@ for(pop_type in 1:length(pop_type_list)){
   QUAC_rel_df <- QUAC_df[!QUAC_df[,1] %in% QUAC_ind_red_list,]
   
   ##write csv of the reduced data frame 
-  write.csv(QUAC_rel_df, paste0("QUAC_data_frames/Relate_Red/QUAC_", pop_type_list[[pop_type]], "_rel_df.csv"))
+  write.csv(QUAC_rel_df, paste0("QUAC_data_frames/Relate_Red/QUAC_", pop_type_list[[pop_type]], "_relate_red_df.csv"))
   
   ##now limit genind object by relatedness 
   QUAC_rel_gen <- QUAC_gen[!rownames(QUAC_gen@tab) %in% QUAC_ind_red_list,]
   
   ##write out genalex file
   genind2genalex(QUAC_rel_gen, paste0("QUAC_data_frames/Relate_Red/QUAC_", pop_type_list[[pop_type]], 
-                                     "_rel_genalex.csv"), overwrite = TRUE)
+                                     "_relate_red_genalex.csv"), overwrite = TRUE)
   
 }
 

@@ -149,12 +149,12 @@ QUAC_allele_cap <-matrix(nrow = (length(dup_reps)), ncol = length(list_allele_ca
 ##run loop to generate allelic capture table 
 #the outer loop is calculating how many copies of each allele in each category exists
 #the inner loop is calculating the percent capture of each allele in each frequency category 
-for(ndrop in c(0,2)){
-  for(dup in 1:length(dup_reps)){
-    for(cat in 1:length(list_allele_cat)){
+for(ndrop in c(0,2)){     #loop to include very rare or not 
+  for(dup in 1:length(dup_reps)){     #loop to determine how many duplicate copies are captured
+    for(cat in 1:length(list_allele_cat)){  #loop for all allelic frequency categories
       
-      if(ndrop == 0) n_drop_file <- "_dr_0"
-      if(ndrop == 2) n_drop_file <- ""
+      if(ndrop == 0) n_drop_file <- "_ndrop0"
+      if(ndrop == 2) n_drop_file <- "_ndrop2"
       
       ##first calculate the frequency categories of alleles in the wild individuals   	
       QUAC_allele_cat <- get.allele.cat(QUAC_wild_genpop, 1, 1, as.numeric(n_ind_p_pop), n_drop = ndrop, glob_only = TRUE)	

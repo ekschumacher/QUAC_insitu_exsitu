@@ -40,4 +40,30 @@ The two main folders of this project are QUAC_data_files and QUAC_analyses. QUAC
 <ul><ul><ul><li>QUAC_relate_red_wild.arp</li></ul></ul></ul>
 <ul><ul><ul><li>QUAC_relate_red_wild.gen</li></ul></ul></ul>
 
+<ul><li>QUAC_data_frames</li></ul>
+<ul><ul><li>Description: This folder contains all data frames created for genetic analyses. "cleaned" data frames reflect that individuals have been removed for missing data and clones. CSV refers to a comma separated value file.</li></ul></ul>
+<ul><ul><ul><li>QUAC_garden_occ.csv: A CSV of all the garden individuals with source GPS locations</li></ul></ul></ul>
+<ul><ul><ul><li>QUAC_wild_lon_lat.csv: CSV of QUAC wild individuals and their sample location </li></ul></ul></ul>
+<ul><ul><ul><li>QUAC_allpop.csv: CSV of QUAC wild individuals and their sample location </li></ul></ul></ul>
+
+<ul><ul><li>EST</li></ul></ul>
+<ul><ul><ul><li>Description: Folder containing QUAC individuals separated by population type - garden or botanic garden - with loci separated by EST vs. genomic microsatellites.</li></ul></ul></ul>
+<ul><ul><ul><li>QUAC_garden_clean_EST_df.csv</li></ul></ul></ul>
+<ul><ul><ul><li>QUAC_garden_clean_non_EST_df.csv</li></ul></ul></ul>
+<ul><ul><ul><li>QUAC_wild_clean_EST_df.csv</li></ul></ul></ul>
+<ul><ul><ul><li>QUAC_wild_clean_non_EST_df.csv</li></ul></ul></ul>
+
+<ul><ul><li>Garden_Wild</li></ul></ul>
+<ul><ul><ul><li>Description: Folder containing QUAC data frames created with populations and population type for each individual. </li></ul></ul></ul>
+<ul><ul><ul><li>QUAC_clean_df.csv</li></ul></ul></ul>
+<ul><ul><ul><li>QUAC_garden_wild_clean_genalex.csv</li></ul></ul></ul>
+<ul><ul><ul><li>QUAC_wild_lonlat_allpop_clean_df.csv</li></ul></ul></ul>
+
+<ul><ul><li>Relate_Red</li></ul></ul>
+<ul><ul><ul><li>Description: Folder containing QUAC data frames created by relatedness reduction - individuals with 25% missing data are removed - that are used for clustering analyses.</li></ul></ul></ul>
+<ul><ul><ul><li>QUAC_garden_relate_red_df.csv</li></ul></ul></ul>
+<ul><ul><ul><li>QUAC_garden_relate_red_genalex.csv</li></ul></ul></ul>
+<ul><ul><ul><li>QUAC_wild_relate_red_df.csv</li></ul></ul></ul>
+<ul><ul><ul><li>QUAC_wild_relate_red_genalex.csv</li></ul></ul></ul>
+
 <b>QUAC_analyses</b>: This folder contains all the RScripts used to run analyses on QUAC data files. The Results folder is separated into Clustering analyses (like PCA and STRUCTURE) and Sum_Stats contains all of the overall statistics calculated by wild populations and garden separately. Finally, the Wild_Garden_Comparison folder contains all of the results generated when comparing diversity differences between garden and wild populations. 

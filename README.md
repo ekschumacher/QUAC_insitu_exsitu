@@ -20,7 +20,10 @@ The two main folders of this project are QUAC_data_files and QUAC_analyses. QUAC
 
 <b>Files within QUAC_data_files</b> 
 <ul><li>QUAC_adegenet_files</li></ul>
-<ul><ul><li>Description: All files created for genetic analyses in the R package adegenet.</li></ul></ul>
+<ul><ul><li>Description: All files created for genetic analyses in the R package adegenet. "allpop" Genepop files contain all 463 QUAC individuals separated into all 22 populations. "allpop_clean" Genepop files contain 449 QUAC following individual reduction for missing data and clones. These files were then reorganized to create the documents found in the other folders within this folder.</li></ul></ul>
+<ul><ul><li>QUAC_allpop.arp</li></ul></ul>
+<ul><ul><li>QUAC_allpop.gen</li></ul></ul>
+<ul><ul><li>QUAC_allpop_clean.gen</li></ul></ul>
 <ul><ul><li>EST</li></ul></ul>
 <ul><ul><ul><li>Description: Folder containing Genepop files with loci separated by whether or not they are an expressed sequence tag microsatellite region (EST) or not (non_EST) and also by population type (garden or wild) </li></ul></ul></ul>
 <ul><ul><ul><li> QUAC_garden_cleaned_EST_onepop.gen</li></ul></ul></ul>
@@ -33,6 +36,8 @@ The two main folders of this project are QUAC_data_files and QUAC_analyses. QUAC
 
 <ul><ul><li>Relate_Red</li></ul></ul>
 <ul><ul><ul><li>Description: Folder containing QUAC individuals reduced by relatedness - individuals that were related by more than 25% were reduced to one representative individuals - and then separated by population type - garden or wild. </li></ul></ul></ul>
-<ul><ul><ul><li>QUAC_garden_wild_clean.gen</li></ul></ul></ul>
+<ul><ul><ul><li>QUAC_relate_red_garden_wild.gen</li></ul></ul></ul>
+<ul><ul><ul><li>QUAC_relate_red_wild.arp</li></ul></ul></ul>
+<ul><ul><ul><li>QUAC_relate_red_wild.gen</li></ul></ul></ul>
 
 <b>QUAC_analyses</b>: This folder contains all the RScripts used to run analyses on QUAC data files. The Results folder is separated into Clustering analyses (like PCA and STRUCTURE) and Sum_Stats contains all of the overall statistics calculated by wild populations and garden separately. Finally, the Wild_Garden_Comparison folder contains all of the results generated when comparing diversity differences between garden and wild populations. 

@@ -1,6 +1,6 @@
 [Profile]
      Title=""
-     NbSamples=17
+     NbSamples=2
      GenotypicData=1
      GameticPhase=0
      RecessiveData=0
@@ -9,7 +9,7 @@
      MissingData='?'
      CompDistMatrix=1
 [Data]
-  [[Samples]]   #Data for 15Loci: 0C11 1G13 G07 1F02 FIR031 GOT009 POR016 FIR013 FIR043 GOTO40 PIE039 FIR53 FIR048 PIE125 QpZAG9 
+  [[Samples]]   #Data for 15Loci: locus1 locus2 locus3 locus4 locus5 locus6 locus7 locus8 locus9 locus10 locus11 locus12 locus13 locus14 locus15 
      SampleName="Garden"
      SampleSize=78
      SampleData=     {
@@ -170,8 +170,8 @@
        QAc-G-0249 1  210 183 206 163 148 225 118 139 116 232 165 137 212 151 256
                      218 187 206 161 154 237 118 137 114 232 165 140 204 154 244
      }
-     SampleName="PorterMountain_W"
-     SampleSize=33
+     SampleName="Wild"
+     SampleSize=110
      SampleData=     {
        QAc-W-0001 1  200 171 206 161 166 235 118 139 116 232 165 140 206 151 256
                      208 187 208 157 140 237 118 139 114 232 165 140 192 151 258
@@ -239,10 +239,6 @@
                      222 173 208 157 138 233 118 139 114 232 165 140 214 157 260
        QAc-W-0041 1  212 171 206 161 150 235 118 139 116 232 165 137 210 139 258
                      200 181 206 161 144 233 118 137 118 238 165 140 210 151 252
-     }
-     SampleName="MagazineMountain_W"
-     SampleSize=21
-     SampleData=     {
        QAc-W-0042 1  200 181 206 167 166 237 118 139 122 232 165 137 202 139 256
                      214 181 206 161 158 227 118 137 130 232 165 137 202 151 258
        QAc-W-0044 1  200 171 206 161 144 235 118 139 122 232 165 137 202 139 258
@@ -285,10 +281,6 @@
                      214 179 206 163 144 235 118 139 122 232 165 134 194 151 252
        QAc-W-0077 1  200 181 206 161 146 239 118 139 112 232 165 137 214 151 254
                      214 179 206 161 144 233 118 139 124 232 165 134 194 154 248
-     }
-     SampleName="PryorMountain_W"
-     SampleSize=14
-     SampleData=     {
        QAc-W-0078 1  202 175 206 161 148 225 118 139 116 232 165 137 210 145 246
                      218 181 204 161 146 229 118 139 116 232 165 140 192 157 244
        QAc-W-0079 1  210 175 206 165 148 225 118 139 116 232 165 140 206 ? 262
@@ -317,10 +309,6 @@
                      216 181 206 177 158 241 118 139 116 232 165 137 184 157 248
        QAc-W-0107 1  202 171 206 165 160 229 118 139 112 232 165 137 206 151 242
                      200 175 206 165 146 235 118 139 118 232 167 134 210 151 242
-     }
-     SampleName="Sugar_Loaf_Mountains_W"
-     SampleSize=35
-     SampleData=     {
        QAc-W-0115 1  212 179 206 163 138 235 118 139 114 232 165 137 206 145 254
                      222 173 206 161 138 235 118 141 114 232 165 140 212 157 242
        QAc-W-0116 1  200 171 206 163 154 235 118 137 112 232 165 137 192 151 258
@@ -391,10 +379,6 @@
                      214 173 206 161 142 243 118 143 124 232 165 137 212 151 248
        QAc-W-0164 1  200 179 206 161 154 235 118 139 116 232 165 137 206 151 256
                      218 179 206 161 138 241 118 139 112 238 167 137 196 157 248
-     }
-     SampleName="Kessler_Mountain_W"
-     SampleSize=7
-     SampleData=     {
        QAc-W-0167 1  200 179 206 163 146 235 118 139 118 232 165 134 200 151 246
                      208 187 206 167 162 235 114 139 124 232 161 146 198 157 242
        QAc-W-0168 1  210 175 206 163 154 239 118 139 116 232 165 134 210 157 254
@@ -410,70 +394,11 @@
        QAc-W-0174 1  200 181 206 163 146 237 118 139 114 232 165 134 192 157 242
                      214 187 206 163 138 231 118 139 114 232 165 146 196 154 264
      }
-     SampleName="Pop7"
-     SampleSize=0
-     SampleData=     {
-     }
-     SampleName="Pop8"
-     SampleSize=0
-     SampleData=     {
-     }
-     SampleName="Pop9"
-     SampleSize=0
-     SampleData=     {
-     }
-     SampleName="Pop10"
-     SampleSize=0
-     SampleData=     {
-     }
-     SampleName="Pop11"
-     SampleSize=0
-     SampleData=     {
-     }
-     SampleName="Pop12"
-     SampleSize=0
-     SampleData=     {
-     }
-     SampleName="Pop13"
-     SampleSize=0
-     SampleData=     {
-     }
-     SampleName="Pop14"
-     SampleSize=0
-     SampleData=     {
-     }
-     SampleName="Pop15"
-     SampleSize=0
-     SampleData=     {
-     }
-     SampleName="Pop16"
-     SampleSize=0
-     SampleData=     {
-     }
-     SampleName="Pop17"
-     SampleSize=0
-     SampleData=     {
-     }
 [[Structure]]
      StructureName=" Structure"
      NbGroups=1
      IndividualLevel=0
      Group= {
                  "Garden"
-                 "PorterMountain_W"
-                 "MagazineMountain_W"
-                 "PryorMountain_W"
-                 "Sugar_Loaf_Mountains_W"
-                 "Kessler_Mountain_W"
-                 "Pop7"
-                 "Pop8"
-                 "Pop9"
-                 "Pop10"
-                 "Pop11"
-                 "Pop12"
-                 "Pop13"
-                 "Pop14"
-                 "Pop15"
-                 "Pop16"
-                 "Pop17"
+                 "Wild"
      }

@@ -61,11 +61,12 @@ QUAC_relate_red_df <- QUAC_rel_ready_df[!QUAC_rel_ready_df[,1] %in% QUAC_ind_red
 #code calculate maternal lines by garden 
 for(garden in 1:length(QUAC_bg_list)){
   
-  #count unique maternal lines for each botanic garden
-  QUAC_bg_maternal[garden,1] <- length(unique(QUAC_garden_accessions[QUAC_garden_accessions$Pop == paste0(QUAC_bg_list[[garden]]),]$accession_simple))
-  
+
   #count number of individuals per botanic garden
-  QUAC_bg_maternal[garden,2] <- length(QUAC_garden_accessions[QUAC_garden_accessions$Pop == paste0(QUAC_bg_list[[garden]]),][,1])
+  QUAC_bg_maternal[garden,1] <- length(QUAC_garden_accessions[QUAC_garden_accessions$Pop == paste0(QUAC_bg_list[[garden]]),][,1])
+  
+  #count unique maternal lines for each botanic garden
+  QUAC_bg_maternal[garden,2] <- length(unique(QUAC_garden_accessions[QUAC_garden_accessions$Pop == paste0(QUAC_bg_list[[garden]]),]$accession_simple))
   
   #count the number of individuals with genetic similarities 
   QUAC_bg_maternal[garden,3] <- length(QUAC_relate_red_df[QUAC_relate_red_df$Pop == QUAC_bg_list[[garden]],][,1])
@@ -75,7 +76,7 @@ for(garden in 1:length(QUAC_bg_list)){
 
 #name rows and columns
 rownames(QUAC_bg_maternal) <- QUAC_bg_list
-colnames(QUAC_bg_maternal) <- c("Unique_Maternal_Lines", "Total_Ind")
+colnames(QUAC_bg_maternal) <- c("Total_Ind", "Unique_Maternal_Lines", "Genetically_Distinct_Ind")
 
 #write out 
 write.csv(QUAC_bg_maternal, "../QUAC_analyses/Results/Sum_Stats/QUAC_bg_maternal.csv")

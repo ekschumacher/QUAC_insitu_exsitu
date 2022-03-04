@@ -37,6 +37,9 @@ QUAC_assign_list <- list()
 #create final matrix to store results
 QUAC_assign_success <- matrix(nrow = length(QUAC_assign_output), ncol = 1)
 
+#col list 
+col_list <- c(11,13,13,13,13)
+
 #loop to load in assignment output files 
 for(assign in 1:length(QUAC_assign_output)){
   
@@ -44,7 +47,7 @@ for(assign in 1:length(QUAC_assign_output)){
   QUAC_assign_list[[assign]] <- read.csv(paste0(QUAC_assign_output[[assign]]))
   
   #add sample population depending on if they are reduced or not 
-  if(assign == 1|assign == 2){
+  if(assign == 1|assign == 2| assign == 3){
     
     QUAC_assign_list[[assign]] <- cbind(QUAC_assign_list[[assign]], QUAC_sample_pops$Sample_Pop) 
     
@@ -56,29 +59,29 @@ for(assign in 1:length(QUAC_assign_output)){
   #now determine correct assignment - if the assignment testing correctly assigned individuals
   #add a "Y" if no, add a "N", if no sample pop, say "none"
   
-  for(ind in 1:length(QUAC_assign_list[[assign]][,1])){
-  assign_test <- QUAC_assign_list[[assign]][ind,13] == QUAC_assign_list[[assign]][ind,3]
-  
+ for(ind in 1:length(QUAC_assign_list[[assign]][,1])){
+    assign_test <- QUAC_assign_list[[assign]][ind,col_list[[assign]]] == QUAC_assign_list[[assign]][ind,3]
+ # 
   if(assign_test == TRUE){
     
-    QUAC_assign_list[[assign]][ind,14] <- "Y"
+     QUAC_assign_list[[assign]][ind,col_list[[assign]]+1] <- "Y"
     
-  }else{
+     }else{
     
-    QUAC_assign_list[[assign]][ind,14] <- "N"
+      QUAC_assign_list[[assign]][ind,col_list[[assign]]+1] <- "N"
     
-    }
+   }
     
   }
   
   #limit data frame by individuals with no source pop info 
-  QUAC_lm_df_1 <- QUAC_assign_list[[assign]][QUAC_assign_list[[assign]][,13] == "NONE",]
+  QUAC_lm_df_1 <- QUAC_assign_list[[assign]][QUAC_assign_list[[assign]][,col_list[[assign]]] == "NONE",]
   
   #remove these from the data frame 
-  QUAC_lm_df2 <- QUAC_assign_list[[assign]][!QUAC_assign_list[[assign]][,13] %in% QUAC_lm_df_1[,13],]
+  QUAC_lm_df2 <- QUAC_assign_list[[assign]][!QUAC_assign_list[[assign]][,1] %in% QUAC_lm_df_1[,1],]
   
   #now calculate the final result 
-  QUAC_assign_success[assign,1] <- signif(length(QUAC_lm_df2[QUAC_lm_df2[,14] == "Y",][,1])/length(QUAC_lm_df2[,1])*100, 3)
+  QUAC_assign_success[assign,1] <- signif(length(QUAC_lm_df2[QUAC_lm_df2[,col_list[[assign]]+1] == "Y",][,1])/length(QUAC_lm_df2[,1])*100, 3)
  
   #name rows 
   rownames(QUAC_assign_success) <- gsub("\\..*", "",QUAC_assign_output)

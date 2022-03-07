@@ -70,7 +70,7 @@ for(pop_type in 1:length(pop_type_list)){
   #then subset genind by pop type - garden of wild 
   QUAC_gen <- QUAC_garden_wild_gen[rownames(QUAC_garden_wild_gen@tab) %in% QUAC_df$Ind,]
   
-  ####Allelic richness calculations 
+  #Allelic richness calculations 
   QUAC_allrich[[pop_type]] <- allelic.richness(QUAC_gen)$Ar
   
   if(pop_type == 1){
@@ -188,5 +188,70 @@ for(ndrop in c(0,2)){     #loop to include very rare or not
   write.csv(QUAC_allele_cap, paste0("QUAC_all_cap_garden_df", n_drop_file, ".csv"))
 }
 
-###write session info out
+#####################
+#     Plotting      #
+#####################
+#create mean data frames - allrich 
+QUAC_allrich_mean_df <- as.data.frame(rbind(mean(QUAC_allrich[[1]][,1]), mean(QUAC_allrich[[2]][,1])))
+QUAC_allrich_mean_df$pop_type <- NA
+QUAC_allrich_mean_df$pop_type <- c("Garden", "Wild")
+
+#calculate standard errors
+allrich_garden_se <- sd(QUAC_allrich[[1]][,1])/sqrt(length(QUAC_allrich[[1]][,1]))
+allrich_wild_se <- sd(QUAC_allrich[[2]][,1])/sqrt(length(QUAC_allrich[[2]][,1]))
+
+#create mean data frame - hexp
+QUAC_hexp_mean_df <- as.data.frame(rbind(mean(QUAC_hexp[[1]][,1]), mean(QUAC_hexp[[2]][,1])))
+QUAC_hexp_mean_df$pop_type <- NA
+QUAC_hexp_mean_df$pop_type <- c("Garden", "Wild")
+
+#calculate standard errors
+hexp_garden_se <- sd(QUAC_hexp[[1]][,1])/sqrt(length(QUAC_hexp[[1]][,1]))
+hexp_wild_se <- sd(QUAC_hexp[[2]][,1])/sqrt(length(QUAC_hexp[[2]][,1]))
+
+
+#allrich comparison boxplot
+pdf("allrich_garden_wild_barplot.pdf", width = 8, height = 10)
+barplot(QUAC_allrich_mean_df[,1], beside = TRUE, 
+        ylim = c(0,15), col = c("darkgreen", "darkseagreen1"),
+        names = c("Garden", "Wild"), 
+        main = "Allelic Richness Compared Between Garden and Wild Populations", 
+        xlab = "Population Type", ylab = "Allelic Richness")
+arrows(x0 = 0.7, y0 = QUAC_allrich_mean_df[1,1] - allrich_garden_se, 
+       x1 = 0.7, y1 = QUAC_allrich_mean_df[1,1] + allrich_garden_se,
+       code=3, angle=90, length=0.1)
+
+arrows(x0 = 1.9, y0 = QUAC_allrich_mean_df[2,1] - allrich_wild_se, 
+       x1 = 1.9, y1 = QUAC_allrich_mean_df[2,1] + allrich_wild_se,
+       code=3, angle=90, length=0.1)
+
+abline(h = 0)
+dev.off()
+
+#hexp barplot
+
+#hexp comparison boxplot
+pdf("hexp_garden_wild_barplot.pdf", width = 8, height = 10)
+barplot(QUAC_hexp_mean_df[,1], beside = TRUE, 
+        ylim = c(0,1), col = c("darkgreen", "darkseagreen1"),
+        names = c("Garden", "Wild"), 
+        main = "Expected Heterozygosity Compared Between Garden and Wild Populations", 
+        xlab = "Population Type", ylab = "Expected Heterozygosity")
+arrows(x0 = 0.7, y0 = QUAC_hexp_mean_df[1,1] - hexp_garden_se, 
+       x1 = 0.7, y1 = QUAC_hexp_mean_df[1,1] + hexp_garden_se,
+       code=3, angle=90, length=0.1)
+
+arrows(x0 = 1.9, y0 = QUAC_hexp_mean_df[2,1] - hexp_wild_se, 
+       x1 = 1.9, y1 = QUAC_hexp_mean_df[2,1] + hexp_wild_se,
+       code=3, angle=90, length=0.1)
+
+abline(h = 0)
+dev.off()
+
+
+#write session info out
 sessionInfo()
+
+
+
+

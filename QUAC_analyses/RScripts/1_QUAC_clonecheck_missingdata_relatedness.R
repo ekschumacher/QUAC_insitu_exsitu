@@ -24,12 +24,11 @@ setwd("../../QUAC_data_files")
 ##convert QUAC all pop arlequin file into genepop file if needed
 #arp2gen("QUAC_adegenet_files/QUAC_allpop.arp")
 
-##now read in genepop file as a genind for adegenet 
+#now read in genepop file as a genind for adegenet 
 QUAC_gen <- read.genepop("QUAC_adegenet_files/QUAC_allpop.gen", ncode = 3)
 
-##load relatedness data frame for relatedness analysis 
+#load relatedness data frame for relatedness analysis 
 QUAC_df <- read.csv("QUAC_data_frames/QUAC_allpop.csv")
-QUAC_df <- QUAC_df[,-1]
 
 ##rename individuals in the genind object 
 rownames(QUAC_gen@tab) <- QUAC_df[,1]
@@ -40,6 +39,7 @@ source("../QUAC_analyses/RScripts/relatedness_analyses.R")
 ############################################################
 #    Remove Clones and Individuals with Missing Data       #
 ############################################################
+setwd("..")
 ##clone check 
 #convert to genelcone object
 QUAC_geneclone <- as.genclone(QUAC_gen)

@@ -183,9 +183,15 @@ for(ndrop in c(0,2)){     #loop to include very rare or not
   colnames(QUAC_allele_cap) <- list_allele_cat
 
   ##write out data frames
-  write.csv(QUAC_all_exist_df, paste0("QUAC_all_exist_df", n_drop_file, ".csv"))
-  write.csv(QUAC_wild_cap_df, paste0("QUAC_wild_cap_df", n_drop_file, ".csv"))
-  write.csv(QUAC_allele_cap, paste0("QUAC_all_cap_garden_df", n_drop_file, ".csv"))
+  #write.csv(QUAC_all_exist_df, paste0("QUAC_all_exist_df", n_drop_file, ".csv"))
+  #write.csv(QUAC_wild_cap_df, paste0("QUAC_wild_cap_df", n_drop_file, ".csv"))
+  #write.csv(QUAC_allele_cap, paste0("QUAC_all_cap_garden_df", n_drop_file, ".csv"))
+  
+  #write out duplicate code graph 
+  pdf(paste0("QUAC_wild_cap_dup_barplot",n_drop_file, '.pdf'), width = 8, height = 8)
+  barplot(t(QUAC_wild_cap_df[,c(1, 3, 5)])*100, las = 2, beside = TRUE,
+          col = c("red", "coral", "deeppink4"), legend.text = c("Global Alleles", "Common Alleles", "Rare Alleles"))
+  dev.off()
 }
 
 #####################
